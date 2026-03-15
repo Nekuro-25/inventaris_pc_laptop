@@ -17,7 +17,7 @@
         <h2>Sistem Inventaris</h2>
         <p>PC & Laptop</p>
 
-        <form action="" method="POST">
+        <form action="login/proses_login.php" method="POST">
 
             <div class="input-group">
                 <label>Username</label>

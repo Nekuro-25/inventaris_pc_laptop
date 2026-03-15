@@ -18,6 +18,7 @@
         <ul>
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="data.php">Data Inventaris</a></li>
+            <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
             <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <li><a href="../laporan/laporan.php">Laporan</a></li>
             <li><a href="../user/data_user.php">Manajemen User</a></li>

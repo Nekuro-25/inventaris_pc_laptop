@@ -20,6 +20,7 @@
         <ul>
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
+            <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
             <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <li><a href="laporan.php">Laporan</a></li>
             <li><a href="../user/data_user.php">Manajemen User</a></li>
@@ -83,25 +84,6 @@
 
                 <tbody>
 
-                    <tr>
-                        <td>1</td>
-                        <td>PC01</td>
-                        <td>PC Lab 1</td>
-                        <td>PC</td>
-                        <td>Dell</td>
-                        <td>Lab Komputer</td>
-                        <td>Aktif</td>
-                    </tr>
-
-                    <tr>
-                        <td>2</td>
-                        <td>LP02</td>
-                        <td>Laptop Asus</td>
-                        <td>Laptop</td>
-                        <td>Asus</td>
-                        <td>Ruang TU</td>
-                        <td>Rusak</td>
-                    </tr>
 
                 </tbody>
 

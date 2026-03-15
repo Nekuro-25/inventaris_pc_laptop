@@ -5,9 +5,9 @@ $user = "root";
 $password = "";
 $database = "inventaris_db";
 
-$conn = mysqli_connect($host, $user, $password, $database);
+$koneksi = mysqli_connect($host, $user, $password, $database);
 
-if (!$conn) {
+if (!$koneksi) {
     die("Koneksi gagal". mysqli_connect_error());
 }
 ?>

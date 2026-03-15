@@ -12,104 +12,104 @@
 
 <div class="container">
 
-<!-- Sidebar -->
-<div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar">
 
-<h2>Inventaris</h2>
+        <h2>Inventaris</h2>
+        
+        <ul>
+            <li><a href="../dashboard/index.php">Dashboard</a></li>
+            <li><a href="../inventaris/data.php">Data Inventaris</a></li>
+            <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
+            <li><a href="laporan.php">Laporan</a></li>
+            <li><a href="../user/data_user.php">Manajemen User</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
 
-<ul>
-<li><a href="../dashboard/index.php">Dashboard</a></li>
-<li><a href="../inventaris/data.php">Data Inventaris</a></li>
-<li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-<li><a href="laporan.php">Laporan</a></li>
-<li><a href="../user/data_user.php">Manajemen User</a></li>
-<li><a href="#">Logout</a></li>
-</ul>
+    </div>
 
-</div>
+    <!-- Main Content -->
+    <div class="main">
 
-<!-- Main Content -->
-<div class="main">
+        <div class="topbar">
+            <h1>Laporan Inventaris</h1>
+        </div>
 
-<div class="topbar">
-<h1>Laporan Inventaris</h1>
-</div>
+        <div class="table-container">
 
-<div class="table-container">
+            <h3>Filter Laporan</h3>
 
-<h3>Filter Laporan</h3>
+            <div class="filter-form">
 
-<div class="filter-form">
+                <div class="filter-group">
+                    <label>Tanggal Awal</label>
+                    <input type="date">
+                </div>
 
-<div class="filter-group">
-<label>Tanggal Awal</label>
-<input type="date">
-</div>
+                <div class="filter-group">
+                    <label>Tanggal Akhir</label>
+                    <input type="date">
+                </div>
 
-<div class="filter-group">
-<label>Tanggal Akhir</label>
-<input type="date">
-</div>
+                <div class="filter-group">
+                    <label>Jenis Barang</label>
+                    <select>
+                    <option>Semua</option>
+                    <option>PC</option>
+                    <option>Laptop</option>
+                    </select>
+                </div>
 
-<div class="filter-group">
-<label>Jenis Barang</label>
-<select>
-<option>Semua</option>
-<option>PC</option>
-<option>Laptop</option>
-</select>
-</div>
+                <button class="btn-filter">Tampilkan</button>
+                <button class="btn-cetak">Cetak</button>
 
-<button class="btn-filter">Tampilkan</button>
-<button class="btn-cetak">Cetak</button>
+            </div>
 
-</div>
+            <hr style="margin:20px 0">
 
-<hr style="margin:20px 0">
+            <table>
 
-<table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Kode Barang</th>
+                        <th>Nama Barang</th>
+                        <th>Jenis</th>
+                        <th>Merk</th>
+                        <th>Lokasi</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
 
-<thead>
-<tr>
-<th>No</th>
-<th>Kode Barang</th>
-<th>Nama Barang</th>
-<th>Jenis</th>
-<th>Merk</th>
-<th>Lokasi</th>
-<th>Status</th>
-</tr>
-</thead>
+                <tbody>
 
-<tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>PC01</td>
+                        <td>PC Lab 1</td>
+                        <td>PC</td>
+                        <td>Dell</td>
+                        <td>Lab Komputer</td>
+                        <td>Aktif</td>
+                    </tr>
 
-<tr>
-<td>1</td>
-<td>PC01</td>
-<td>PC Lab 1</td>
-<td>PC</td>
-<td>Dell</td>
-<td>Lab Komputer</td>
-<td>Aktif</td>
-</tr>
+                    <tr>
+                        <td>2</td>
+                        <td>LP02</td>
+                        <td>Laptop Asus</td>
+                        <td>Laptop</td>
+                        <td>Asus</td>
+                        <td>Ruang TU</td>
+                        <td>Rusak</td>
+                    </tr>
 
-<tr>
-<td>2</td>
-<td>LP02</td>
-<td>Laptop Asus</td>
-<td>Laptop</td>
-<td>Asus</td>
-<td>Ruang TU</td>
-<td>Rusak</td>
-</tr>
+                </tbody>
 
-</tbody>
+            </table>
 
-</table>
+        </div>
 
-</div>
-
-</div>
+    </div>
 
 </div>
 

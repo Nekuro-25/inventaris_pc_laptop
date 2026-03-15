@@ -37,22 +37,18 @@
 
             <div class="card">
                 <h3>Total PC</h3>
-                <p>25</p>
             </div>
 
             <div class="card">
                 <h3>Total Laptop</h3>
-                <p>18</p>
             </div>
 
             <div class="card">
                 <h3>Perangkat Rusak</h3>
-                <p>4</p>
             </div>
 
             <div class="card">
                 <h3>Total Inventaris</h3>
-                <p>43</p>
             </div>
 
         </div>

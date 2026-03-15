@@ -12,69 +12,69 @@
 
 <div class="container">
 
-<!-- Sidebar -->
-<div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar">
 
-<h2>Inventaris</h2>
+        <h2>Inventaris</h2>
 
-<ul>
-<li><a href="../dashboard/index.php">Dashboard</a></li>
-<li><a href="../inventaris/data.php">Data Inventaris</a></li>
-<li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-<li><a href="../laporan/laporan.php">Laporan</a></li>
-<li><a href="data_user.php">Manajemen User</a></li>
-<li><a href="#">Logout</a></li>
-</ul>
+            <ul>
+                <li><a href="../dashboard/index.php">Dashboard</a></li>
+                <li><a href="../inventaris/data.php">Data Inventaris</a></li>
+                <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
+                <li><a href="../laporan/laporan.php">Laporan</a></li>
+                <li><a href="data_user.php">Manajemen User</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
 
-</div>
+    </div>
 
-<!-- Main Content -->
-<div class="main">
+    <!-- Main Content -->
+    <div class="main">
 
-<div class="topbar">
-<h1>Tambah User</h1>
-</div>
+        <div class="topbar">
+            <h1>Tambah User</h1>
+        </div>
 
-<div class="form-container">
+        <div class="form-container">
 
-<form>
+            <form>
 
-<div class="form-group">
-<label>Nama</label>
-<input type="text" placeholder="Masukkan nama">
-</div>
+                <div class="form-group">
+                    <label>Nama</label>
+                    <input type="text" placeholder="Masukkan nama">
+                </div>
 
-<div class="form-group">
-<label>Username</label>
-<input type="text" placeholder="Masukkan username">
-</div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" placeholder="Masukkan username">
+                </div>
 
-<div class="form-group">
-<label>Password</label>
-<input type="password" placeholder="Masukkan password">
-</div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="Masukkan password">
+                </div>
 
-<div class="form-group">
-<label>Role</label>
-<select>
-<option>Admin</option>
-<option>Teknisi</option>
-<option>User</option>
-</select>
-</div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select>
+                    <option>Admin</option>
+                    <option>Teknisi</option>
+                    <option>User</option>
+                    </select>
+                </div>
 
-<div class="form-buttons">
+                <div class="form-buttons">
 
-<button class="btn-simpan">Simpan</button>
-<a href="data_user.php" class="btn-batal">Batal</a>
+                    <button class="btn-simpan">Simpan</button>
+                    <a href="data_user.php" class="btn-batal">Batal</a>
 
-</div>
+                </div>
 
-</form>
+            </form>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </div>
 

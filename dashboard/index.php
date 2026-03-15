@@ -15,7 +15,6 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <h2>Inventaris</h2>
-
         <ul>
             <li><a href="index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>

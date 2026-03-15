@@ -15,10 +15,9 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <h2>Inventaris</h2>
-
         <ul>
-            <li><a href="index.php">Dashboard</a></li>
-            <li><a href="../inventaris/data.php">Data Inventaris</a></li>
+            <li><a href="../dashboard/index.php">Dashboard</a></li>
+            <li><a href="data.php">Data Inventaris</a></li>
             <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <li><a href="../laporan/laporan.php">Laporan</a></li>
             <li><a href="../user/data_user.php">Manajemen User</a></li>

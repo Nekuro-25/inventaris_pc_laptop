@@ -21,7 +21,7 @@
 <li><a href="../dashboard/index.php">Dashboard</a></li>
 <li><a href="../inventaris/data.php">Data Inventaris</a></li>
 <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-<li><a href="#">Laporan</a></li>
+<li><a href="laporan.php">Laporan</a></li>
 <li><a href="../user/data_user.php">Manajemen User</a></li>
 <li><a href="#">Logout</a></li>
 </ul>

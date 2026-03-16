@@ -101,7 +101,11 @@ while($row = mysqli_fetch_assoc($query)){
 
 <a href="edit.php?id=<?php echo $row['id_barang']; ?>" class="btn-edit">Edit</a>
 
-<a href="hapus.php?id=<?php echo $row['id_barang']; ?>" class="btn-hapus">Hapus</a>
+<a href="hapus.php?id=<?php echo $row['id_barang']; ?>" 
+class="btn-hapus"
+onclick="return konfirmasiHapus()">
+Hapus
+</a>
 
 </td>
 
@@ -118,6 +122,8 @@ while($row = mysqli_fetch_assoc($query)){
 </div>
 
 </div>
+
+<script src="../js/konfirmasi.js"></script>
 
 </body>
 </html>

@@ -9,17 +9,25 @@ if(!isset($_SESSION['username'])){
 
 include "../config/koneksi.php";
 
-if(isset($_POST['simpan'])){
+$id = $_GET['id_lokasi'];
+
+$query = mysqli_query($koneksi,"SELECT * FROM lokasi WHERE id_lokasi='$id'");
+$data = mysqli_fetch_assoc($query);
+
+if(isset($_POST['update'])){
 
     $nama_lokasi = $_POST['nama_lokasi'];
 
-    $query = mysqli_query($koneksi,"INSERT INTO lokasi (nama_lokasi) VALUES ('$nama_lokasi')");
+    $update = mysqli_query($koneksi,"UPDATE lokasi SET 
+        nama_lokasi='$nama_lokasi'
+        WHERE id_lokasi='$id'
+    ");
 
-    if($query){
+    if($update){
         header("Location: lokasi.php");
         exit;
     }else{
-        echo "Data gagal disimpan";
+        echo "Data gagal diupdate";
     }
 }
 
@@ -30,7 +38,7 @@ if(isset($_POST['simpan'])){
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tambah Lokasi</title>
+<title>Edit Lokasi</title>
 
 <link rel="stylesheet" href="../css/dashboard.css">
 
@@ -54,12 +62,11 @@ if(isset($_POST['simpan'])){
         </ul>
     </div>
 
-
     <!-- Main Content -->
     <div class="main">
 
         <div class="topbar">
-            <h1>Tambah Lokasi</h1>
+            <h1>Edit Lokasi</h1>
         </div>
 
         <div class="form-container">
@@ -68,12 +75,13 @@ if(isset($_POST['simpan'])){
 
                 <div class="form-group">
                     <label>Nama Lokasi</label>
-                    <input type="text" name="nama_lokasi" placeholder="Masukkan nama lokasi" required>
+                    <input type="text" name="nama_lokasi" 
+                    value="<?php echo $data['nama_lokasi']; ?>" required>
                 </div>
 
                 <div class="form-buttons">
 
-                    <button type="submit" name="simpan" class="btn-simpan">Simpan</button>
+                    <button type="submit" name="update" class="btn-simpan">Update</button>
 
                     <a href="lokasi.php" class="btn-batal">Batal</a>
 

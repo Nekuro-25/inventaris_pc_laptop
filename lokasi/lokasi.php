@@ -4,16 +4,13 @@ session_start();
 
 if(!isset($_SESSION['username'])){
     header("Location: ../index.php");
+    exit;
+}
 
 include("../config/koneksi.php");
 
-$query = mysqli_query($koneksi,"SELECT * FROM inventaris");
-
-}
-
-include "../config/koneksi.php";
-
 $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
+
 ?>
 
 <!DOCTYPE html>
@@ -37,8 +34,8 @@ $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
         <ul>
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
+            <li><a href="lokasi.php">Data Lokasi</a></li>
             <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-            <li><a href="../lokasi/lokasi.php">Lokasi</a></li>
             <li><a href="../laporan/laporan.php">Laporan</a></li>
             <li><a href="../user/data_user.php">Manajemen User</a></li>
             <li><a href="../logout.php">Logout</a></li>
@@ -60,8 +57,9 @@ $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
             <table>
 
                 <tr>
-                    <th>ID Lokasi</th>
+                    <th>No</th>
                     <th>Nama Lokasi</th>
+                    <th>Aksi</th>
                 </tr>
 
                 <?php
@@ -74,8 +72,9 @@ $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
                     <td><?php echo $row['nama_lokasi']; ?></td>
                     <td>
 
-                        <a href="#" class="btn-edit">Edit</a>
-                        <a href="#" class="btn-hapus">Hapus</a>
+                        <a href="edit_lokasi.php?id_lokasi=<?php echo $row['id_lokasi']; ?>" class="btn-edit">Edit</a>
+
+                        <a href="hapus_lokasi.php?id_lokasi=<?php echo $row['id_lokasi']; ?>" class="btn-hapus">Hapus</a>
 
                     </td>
                 </tr>

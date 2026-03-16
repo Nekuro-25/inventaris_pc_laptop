@@ -11,8 +11,6 @@ $query = mysqli_query($koneksi,"SELECT * FROM inventaris");
 
 }
 
-include "../config/koneksi.php";
-
 if(isset($_POST['simpan'])){
 
     $kode_barang = $_POST['kode_barang'];

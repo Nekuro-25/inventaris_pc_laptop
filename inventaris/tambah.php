@@ -50,7 +50,7 @@ if(isset($_POST['simpan'])){
             <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <li><a href="../laporan/laporan.php">Laporan</a></li>
             <li><a href="../user/data_user.php">Manajemen User</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="../logout.php">Logout</a></li>
         </ul>
     </div>
 

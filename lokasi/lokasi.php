@@ -29,7 +29,7 @@ $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
             <li><a href="../lokasi/lokasi.php">Lokasi</a></li>
             <li><a href="../laporan/laporan.php">Laporan</a></li>
             <li><a href="../user/data_user.php">Manajemen User</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="../logout.php">Logout</a></li>
         </ul>
     </div>
 
@@ -48,9 +48,8 @@ $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
             <table>
 
                 <tr>
-                    <th>No</th>
+                    <th>ID Lokasi</th>
                     <th>Nama Lokasi</th>
-                    <th>Aksi</th>
                 </tr>
 
                 <?php

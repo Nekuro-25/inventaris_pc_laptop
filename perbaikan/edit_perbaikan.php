@@ -8,8 +8,18 @@ if(!isset($_SESSION['username'])){
 
 include("../config/koneksi.php");
 
+/* ambil id dari URL */
+$id = $_GET['id'];
+
+/* ambil data perbaikan */
+$query = mysqli_query($koneksi,"
+SELECT * FROM perbaikan WHERE id_perbaikan='$id'
+");
+
+$data = mysqli_fetch_assoc($query);
+
 /* ambil data inventaris untuk dropdown */
-$data_barang = mysqli_query($koneksi,"SELECT id_barang, kode_barang, nama_barang FROM inventaris");
+$data_barang = mysqli_query($koneksi,"SELECT * FROM inventaris");
 
 ?>
 
@@ -19,7 +29,7 @@ $data_barang = mysqli_query($koneksi,"SELECT id_barang, kode_barang, nama_barang
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tambah Perbaikan</title>
+<title>Edit Perbaikan</title>
 
 <link rel="stylesheet" href="../css/dashboard.css">
 
@@ -50,25 +60,34 @@ $data_barang = mysqli_query($koneksi,"SELECT id_barang, kode_barang, nama_barang
 <div class="main">
 
 <div class="topbar">
-<h1>Tambah Data Perbaikan</h1>
+<h1>Edit Data Perbaikan</h1>
 </div>
 
 <div class="form-container">
 
-<form method="POST" action="pr_tambah.php">
+<form method="POST" action="pr_edit.php">
+
+<input type="hidden" name="id_perbaikan" value="<?php echo $data['id_perbaikan']; ?>">
 
 <div class="form-group">
+
 <label>Pilih Barang</label>
 
-<select name="id_barang" required>
-
-<option value="">-- Pilih Barang --</option>
+<select name="id_barang">
 
 <?php
 while($barang = mysqli_fetch_assoc($data_barang)){
 ?>
 
-<option value="<?php echo $barang['id_barang']; ?>">
+<option value="<?php echo $barang['id_barang']; ?>"
+
+<?php
+if($barang['id_barang'] == $data['id_barang']){
+echo "selected";
+}
+?>
+
+>
 
 <?php echo $barang['kode_barang']; ?> - <?php echo $barang['nama_barang']; ?>
 
@@ -82,22 +101,22 @@ while($barang = mysqli_fetch_assoc($data_barang)){
 
 <div class="form-group">
 <label>Tanggal Perbaikan</label>
-<input type="date" name="tanggal" required>
+<input type="date" name="tanggal" value="<?php echo $data['tanggal']; ?>">
 </div>
 
 <div class="form-group">
 <label>Kerusakan</label>
-<input type="text" name="kerusakan" placeholder="Masukkan kerusakan" required>
+<input type="text" name="kerusakan" value="<?php echo $data['kerusakan']; ?>">
 </div>
 
 <div class="form-group">
 <label>Tindakan</label>
-<input type="text" name="tindakan" placeholder="Masukkan tindakan perbaikan">
+<input type="text" name="tindakan" value="<?php echo $data['tindakan']; ?>">
 </div>
 
 <div class="form-buttons">
 
-<button class="btn-simpan" type="submit" name="simpan">Simpan</button>
+<button class="btn-simpan" type="submit">Update</button>
 
 <a href="data_perbaikan.php" class="btn-batal">Batal</a>
 

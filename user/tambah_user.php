@@ -3,17 +3,16 @@ session_start();
 
 if(!isset($_SESSION['username'])){
     header("Location: ../index.php");
+    exit;
+}
 
 include("../config/koneksi.php");
-
-$query = mysqli_query($koneksi,"SELECT * FROM inventaris");
-
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tambah User</title>
@@ -21,74 +20,113 @@ $query = mysqli_query($koneksi,"SELECT * FROM inventaris");
 <link rel="stylesheet" href="../css/dashboard.css">
 
 </head>
+
+<script>
+
+function togglePassword() {
+
+var password = document.getElementById("password");
+
+if (password.type === "password") {
+
+password.type = "text";
+
+} else {
+
+password.type = "password";
+
+}
+
+}
+
+</script>
+
 <body>
 
 <div class="container">
 
-    <!-- Sidebar -->
-    <div class="sidebar">
+<!-- Sidebar -->
+<div class="sidebar">
 
-        <h2>Inventaris</h2>
+<h2>Inventaris</h2>
 
-        <ul>
-            <li><a href="../dashboard/index.php">Dashboard</a></li>
-            <li><a href="../inventaris/data.php">Data Inventaris</a></li>
-            <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
-            <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-            <li><a href="../laporan/laporan.php">Laporan</a></li>
-            <li><a href="data_user.php">Manajemen User</a></li>
-            <li><a href="../logout.php">Logout</a></li>
-        </ul>
+<ul>
+<li><a href="../dashboard/index.php">Dashboard</a></li>
+<li><a href="../inventaris/data.php">Data Inventaris</a></li>
+<li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
+<li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
+<li><a href="../laporan/laporan.php">Laporan</a></li>
+<li><a href="data_user.php">Manajemen User</a></li>
+<li><a href="../logout.php">Logout</a></li>
+</ul>
 
-    </div>
+</div>
 
-    <!-- Main Content -->
-    <div class="main">
+<!-- Main Content -->
+<div class="main">
 
-        <div class="topbar">
-            <h1>Tambah User</h1>
-        </div>
+<div class="topbar">
+<h1>Tambah User</h1>
+</div>
 
-        <div class="form-container">
+<div class="form-container">
 
-            <form>
+<form method="POST" action="pr_tambah.php">
 
-                <div class="form-group">
-                    <label>Nama</label>
-                    <input type="text" placeholder="Masukkan nama">
-                </div>
+<div class="form-group">
+<label>Nama</label>
+<input type="text" name="nama" placeholder="Masukkan nama" required>
+</div>
 
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" placeholder="Masukkan username">
-                </div>
+<div class="form-group">
+<label>Username</label>
+<input type="text" name="username" placeholder="Masukkan username" required>
+</div>
 
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="Masukkan password">
-                </div>
+<div class="form-group">
+<label>Password</label>
 
-                <div class="form-group">
-                    <label>Role</label>
-                    <select>
-                    <option>Admin</option>
-                    <option>Teknisi</option>
-                    <option>User</option>
-                    </select>
-                </div>
+<div style="display:flex; gap:10px;">
 
-                <div class="form-buttons">
+<input type="password" id="password" name="password" placeholder="Masukkan password" required>
 
-                    <button class="btn-simpan">Simpan</button>
-                    <a href="data_user.php" class="btn-batal">Batal</a>
+<button type="button" onclick="togglePassword()">Lihat</button>
 
-                </div>
+</div>
 
-            </form>
+</div>
 
-        </div>
+<div class="form-group">
+<label>Role</label>
 
-    </div>
+<select name="role" required>
+
+<option value="">-- Pilih Role --</option>
+<option value="Admin">Admin</option>
+<option value="Teknisi">Teknisi</option>
+<option value="User">User</option>
+
+</select>
+
+</div>
+
+<div class="form-buttons">
+
+<button class="btn-simpan" type="submit" name="simpan">
+Simpan
+</button>
+
+<a href="data_user.php" class="btn-batal">
+Batal
+</a>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
 
 </div>
 

@@ -7,7 +7,7 @@ if(!isset($_SESSION['username'])){
     exit;
 }
 
-include("../config/koneksi.php");
+include_once("../config/koneksi.php");
 
 $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
 
@@ -15,6 +15,7 @@ $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,69 +26,91 @@ $query = mysqli_query($koneksi,"SELECT * FROM lokasi");
 </head>
 
 <body>
-
-<div class="container">
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Inventaris</h2>
-        <ul>
-            <li><a href="../dashboard/index.php">Dashboard</a></li>
-            <li><a href="../inventaris/data.php">Data Inventaris</a></li>
-            <li><a href="lokasi.php">Data Lokasi</a></li>
-            <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-            <li><a href="../laporan/laporan.php">Laporan</a></li>
-            <li><a href="../user/data_user.php">Manajemen User</a></li>
-            <li><a href="../logout.php">Logout</a></li>
-        </ul>
-    </div>
-
-
-    <!-- Main Content -->
-    <div class="main">
-
-        <div class="topbar">
-            <h1>Data Lokasi</h1>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Inventaris</h2>
+            
+            <ul>
+                <li><a href="../dashboard/index.php">Dashboard</a></li>
+                <li><a href="../inventaris/data.php">Data Inventaris</a></li>
+                <li><a href="lokasi.php">Data Lokasi</a></li>
+                <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
+                <li><a href="../laporan/laporan.php">Laporan</a></li>
+                <li><a href="../user/data_user.php">Manajemen User</a></li>
+                <li><a href="../logout.php">Logout</a></li>
+            </ul>
+        
         </div>
 
-        <div class="table-container">
 
-            <a href="tambah_lokasi.php" class="btn-tambah">+ Tambah Lokasi</a>
+<!-- Main Content -->
+<div class="main">
 
-            <table>
+<div class="topbar">
+<h1>Data Lokasi</h1>
+</div>
 
-                <tr>
-                    <th>No</th>
-                    <th>Nama Lokasi</th>
-                    <th>Aksi</th>
-                </tr>
+<div class="table-container">
 
-                <?php
-                $no = 1;
-                while($row = mysqli_fetch_assoc($query)){
-                ?>
+<a href="tambah_lokasi.php" class="btn-tambah">
++ Tambah Lokasi
+</a>
 
-                <tr>
-                    <td><?php echo $no++; ?></td>
-                    <td><?php echo $row['nama_lokasi']; ?></td>
-                    <td>
+<table>
 
-                        <a href="edit_lokasi.php?id_lokasi=<?php echo $row['id_lokasi']; ?>" class="btn-edit">Edit</a>
+<thead>
+<tr>
+<th>No</th>
+<th>Nama Lokasi</th>
+<th>Aksi</th>
+</tr>
+</thead>
 
-                        <a href="hapus_lokasi.php?id_lokasi=<?php echo $row['id_lokasi']; ?>" class="btn-hapus">Hapus</a>
+<tbody>
 
-                    </td>
-                </tr>
+<?php
+$no = 1;
 
-                <?php } ?>
+while($row = mysqli_fetch_assoc($query)){
+?>
 
-            </table>
+<tr>
 
-        </div>
+<td><?php echo $no++; ?></td>
 
-    </div>
+<td><?php echo htmlspecialchars($row['nama_lokasi']); ?></td>
+
+<td>
+
+<a href="edit_lokasi.php?id_lokasi=<?php echo $row['id_lokasi']; ?>" class="btn-edit">
+Edit
+</a>
+
+<a href="hapus_lokasi.php?id_lokasi=<?php echo $row['id_lokasi']; ?>"
+class="btn-hapus"
+onclick="return konfirmasiHapus()">
+Hapus
+</a>
+
+</td>
+
+</tr>
+
+<?php } ?>
+
+</tbody>
+
+</table>
 
 </div>
+
+</div>
+
+    </div>
+
+
+<script src="../js/konfirmasi.js"></script>
 
 </body>
 </html>

@@ -1,21 +1,27 @@
 <?php
+
 session_start();
 
 if(!isset($_SESSION['username'])){
     header("Location: ../index.php");
+    exit;
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Dashboard Inventaris</title>
 
 <link rel="stylesheet" href="../css/dashboard.css">
 
 </head>
+
 <body>
 
 <div class="container">
@@ -23,6 +29,7 @@ if(!isset($_SESSION['username'])){
     <!-- Sidebar -->
     <div class="sidebar">
         <h2>Inventaris</h2>
+
         <ul>
             <li><a href="index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
@@ -32,6 +39,7 @@ if(!isset($_SESSION['username'])){
             <li><a href="../user/data_user.php">Manajemen User</a></li>
             <li><a href="../logout.php">Logout</a></li>
         </ul>
+
     </div>
 
 

@@ -1,3 +1,16 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['username'])){
+    header("Location: ../index.php");
+
+include("../config/koneksi.php");
+
+$query = mysqli_query($koneksi,"SELECT * FROM inventaris");
+
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

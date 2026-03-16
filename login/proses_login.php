@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 include("../config/koneksi.php");
 
 $username = $_POST["username"];
@@ -10,8 +12,11 @@ $query = mysqli_query($koneksi,"SELECT * FROM users WHERE username='$username' A
 $data = mysqli_fetch_assoc($query);
 
 if ($data){
-    
+
+    $_SESSION['username'] = $data['username'];
+
     header("Location: ../dashboard/index.php");
+    exit;
 
 }else{
 

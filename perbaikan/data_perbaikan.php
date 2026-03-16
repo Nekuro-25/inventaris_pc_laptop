@@ -103,7 +103,7 @@ Edit
 
 <a href="hapus_perbaikan.php?id=<?php echo $row['id_perbaikan']; ?>" 
 class="btn-hapus"
-onclick="return confirm('Yakin ingin menghapus data ini?')">
+onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
 Hapus
 </a>
 
@@ -122,6 +122,8 @@ Hapus
 </div>
 
 </div>
+
+<script src="../js/konfirmasi.js"></script>
 
 </body>
 </html>

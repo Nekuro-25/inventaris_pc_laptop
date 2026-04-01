@@ -16,7 +16,6 @@
 
         <h2>Sistem Inventaris</h2>
         <p>PC & Laptop</p>
-        <p>by Bagus Eka Febriansyah</p>
 
         <form action="login/proses_login.php" method="POST">
 

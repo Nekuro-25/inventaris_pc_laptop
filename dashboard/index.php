@@ -34,6 +34,7 @@ if(!isset($_SESSION['username'])){
             <li><a href="index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
             <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
+            <li><a href="../peminjaman/index.php">Peminjaman</a></li>
             <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <li><a href="../laporan/laporan.php">Laporan</a></li>
             <li><a href="../user/data_user.php">Manajemen User</a></li>

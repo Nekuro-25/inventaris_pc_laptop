@@ -47,6 +47,7 @@ if(isset($_POST['simpan'])){
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
             <li><a href="lokasi.php">Data Lokasi</a></li>
+            <li><a href="../peminjaman/index.php">Peminjaman</a></li>
             <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <li><a href="../laporan/laporan.php">Laporan</a></li>
             <li><a href="../user/data_user.php">Manajemen User</a></li>
@@ -72,11 +73,8 @@ if(isset($_POST['simpan'])){
                 </div>
 
                 <div class="form-buttons">
-
                     <button type="submit" name="simpan" class="btn-simpan">Simpan</button>
-
                     <a href="lokasi.php" class="btn-batal">Batal</a>
-
                 </div>
 
             </form>

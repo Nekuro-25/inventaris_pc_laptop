@@ -28,91 +28,78 @@ $query = mysqli_query($koneksi,"SELECT * FROM user");
 
 <div class="container">
 
-<!-- Sidebar -->
-<div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar">
 
-<h2>Inventaris</h2>
+        <h2>Inventaris</h2>
 
-<ul>
-<li><a href="../dashboard/index.php">Dashboard</a></li>
-<li><a href="../inventaris/data.php">Data Inventaris</a></li>
-<li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
-<li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-<li><a href="../laporan/laporan.php">Laporan</a></li>
-<li><a href="data_user.php">Manajemen User</a></li>
-<li><a href="../logout.php">Logout</a></li>
-</ul>
+        <ul>
+            <li><a href="../dashboard/index.php">Dashboard</a></li>
+            <li><a href="../inventaris/data.php">Data Inventaris</a></li>
+            <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
+            <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
+            <li><a href="../laporan/laporan.php">Laporan</a></li>
+            <li><a href="data_user.php">Manajemen User</a></li>
+            <li><a href="../logout.php">Logout</a></li>
+        </ul>
 
-</div>
+    </div>
 
-<!-- Main Content -->
-<div class="main">
+    <!-- Main Content -->
+    <div class="main">
 
-<div class="topbar">
-<h1>Manajemen User</h1>
-</div>
+        <div class="topbar">
+            <h1>Manajemen User</h1>
+        </div>
 
-<div class="table-container">
+        <div class="table-container">
 
-<a href="tambah_user.php" class="btn-tambah">+ Tambah User</a>
+            <a href="tambah_user.php" class="btn-tambah">+ Tambah User</a>
 
-<table>
+            <table>
 
-<thead>
+                <thead>
 
-<tr>
-<th>No</th>
-<th>Nama</th>
-<th>Username</th>
-<th>Role</th>
-<th>Aksi</th>
-</tr>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Aksi</th>
+                    </tr>
 
-</thead>
+                </thead>
 
-<tbody>
+                <tbody>
 
-<?php
-$no = 1;
+                    <?php
+                    $no = 1;
 
-while($row = mysqli_fetch_assoc($query)){
-?>
+                    while($row = mysqli_fetch_assoc($query)){
+                    ?>
 
-<tr>
+                    <tr>
 
-<td><?php echo $no++; ?></td>
+                        <td><?php echo $no++; ?></td>    
+                        <td><?php echo $row['nama']; ?></td>
+                        <td><?php echo $row['username']; ?></td>
+                        <td><?php echo $row['role']; ?></td>
+                        <td>
+                        <a href="edit.php?id=<?php echo $row['id_user']; ?>" class="btn-edit">Edit</a>
+                        <a href="hapus_user.php?id=<?php echo $row['id_user']; ?>"class="btn-hapus"onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">Hapus</a>
+                        </td>
 
-<td><?php echo $row['nama']; ?></td>
+                    </tr>
+                    
+                    <?php } ?>
+            
+                </tbody>
 
-<td><?php echo $row['username']; ?></td>
+            </table>
 
-<td><?php echo $row['role']; ?></td>
+        </div>
 
-<td>
-
-<a href="edit.php?id=<?php echo $row['id_user']; ?>" class="btn-edit">
-Edit
-</a>
-
-<a href="hapus_user.php?id=<?php echo $row['id_user']; ?>"
-class="btn-hapus"
-onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
-Hapus
-</a>
-
-</td>
-
-</tr>
-
-<?php } ?>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
+    </div>
 
 </div>
 

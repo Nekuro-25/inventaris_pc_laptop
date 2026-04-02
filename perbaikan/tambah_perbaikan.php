@@ -29,85 +29,76 @@ $data_barang = mysqli_query($koneksi,"SELECT id_barang, kode_barang, nama_barang
 
 <div class="container">
 
-<!-- Sidebar -->
-<div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar">
 
-<h2>Inventaris</h2>
+        <h2>Inventaris</h2>
 
-<ul>
-<li><a href="../dashboard/index.php">Dashboard</a></li>
-<li><a href="../inventaris/data.php">Data Inventaris</a></li>
-<li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
-<li><a href="data_perbaikan.php">Perbaikan</a></li>
-<li><a href="../laporan/laporan.php">Laporan</a></li>
-<li><a href="../user/data_user.php">Manajemen User</a></li>
-<li><a href="../logout.php">Logout</a></li>
-</ul>
+        <ul>
+            <li><a href="../dashboard/index.php">Dashboard</a></li>
+            <li><a href="../inventaris/data.php">Data Inventaris</a></li>
+            <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
+            <li><a href="data_perbaikan.php">Perbaikan</a></li>
+            <li><a href="../laporan/laporan.php">Laporan</a></li>
+            <li><a href="../user/data_user.php">Manajemen User</a></li>
+            <li><a href="../logout.php">Logout</a></li>
+        </ul>
 
-</div>
+    </div>
 
-<!-- Main Content -->
-<div class="main">
+    <!-- Main Content -->
+    <div class="main">
 
-<div class="topbar">
-<h1>Tambah Data Perbaikan</h1>
-</div>
+        <div class="topbar">
+            <h1>Tambah Data Perbaikan</h1>
+        </div>
 
-<div class="form-container">
+        <div class="form-container">
 
-<form method="POST" action="pr_tambah.php">
+            <form method="POST" action="pr_tambah.php">
 
-<div class="form-group">
-<label>Pilih Barang</label>
+                <div class="form-group">
+                    <label>Pilih Barang</label>
 
-<select name="id_barang" required>
+                    <select name="id_barang" required>
+                        <option value="">-- Pilih Barang --</option>
+                        <?php
+                            while($barang = mysqli_fetch_assoc($data_barang)){
+                        ?>
+                        <option value="<?php echo $barang['id_barang']; ?>">
+                            <?php echo $barang['kode_barang']; ?> - <?php echo $barang['nama_barang']; ?>
+                        </option>
+                        <?php } ?>
 
-<option value="">-- Pilih Barang --</option>
+                    </select>
 
-<?php
-while($barang = mysqli_fetch_assoc($data_barang)){
-?>
+                </div>
 
-<option value="<?php echo $barang['id_barang']; ?>">
+                <div class="form-group">
+                    <label>Tanggal Perbaikan</label>
+                    <input type="date" name="tanggal" required>
+                </div>
 
-<?php echo $barang['kode_barang']; ?> - <?php echo $barang['nama_barang']; ?>
+                <div class="form-group">
+                    <label>Kerusakan</label>
+                    <input type="text" name="kerusakan" placeholder="Masukkan kerusakan" required>
+                </div>
 
-</option>
+                <div class="form-group">
+                    <label>Tindakan</label>
+                    <input type="text" name="tindakan" placeholder="Masukkan tindakan perbaikan">
+                </div>
 
-<?php } ?>
+                <div class="form-buttons">
+                    <button class="btn-simpan" type="submit" name="simpan">Simpan</button>
+                    <a href="data_perbaikan.php" class="btn-batal">Batal</a>
+                </div>
 
-</select>
+            </form>
 
-</div>
+        </div>
 
-<div class="form-group">
-<label>Tanggal Perbaikan</label>
-<input type="date" name="tanggal" required>
-</div>
-
-<div class="form-group">
-<label>Kerusakan</label>
-<input type="text" name="kerusakan" placeholder="Masukkan kerusakan" required>
-</div>
-
-<div class="form-group">
-<label>Tindakan</label>
-<input type="text" name="tindakan" placeholder="Masukkan tindakan perbaikan">
-</div>
-
-<div class="form-buttons">
-
-<button class="btn-simpan" type="submit" name="simpan">Simpan</button>
-
-<a href="data_perbaikan.php" class="btn-batal">Batal</a>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
+    </div>
 
 </div>
 

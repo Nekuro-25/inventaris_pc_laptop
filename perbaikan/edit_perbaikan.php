@@ -72,7 +72,7 @@ $data_barang = mysqli_query($koneksi,"SELECT * FROM inventaris");
                         <?php
                             while($barang = mysqli_fetch_assoc($data_barang)){
                         ?>
-                        <option value="<?php echo $barang['id_barang']; ?>"<?phpif($barang['id_barang'] == $data['id_barang']){echo "selected";}?>>
+                        <option value="<?php echo $barang['id_barang']; ?>"<?php if($barang['id_barang'] == $data['id_barang']){echo "selected";}?>>
                             <?php echo $barang['kode_barang']; ?> - <?php echo $barang['nama_barang']; ?>
                         </option>
                         <?php } ?>

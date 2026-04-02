@@ -14,10 +14,13 @@ $username = $_POST['username'];
 $password = $_POST['password'];
 $role = $_POST['role'];
 
+// enkripsi password
+$hash = password_hash($password, PASSWORD_DEFAULT);
+
 /* simpan ke database */
 $query = mysqli_query($koneksi,"
 INSERT INTO user (nama, username, password, role)
-VALUES ('$nama','$username','$password','$role')
+VALUES ('$nama','$username','$hash','$role')
 ");
 
 if($query){

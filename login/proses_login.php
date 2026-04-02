@@ -1,27 +1,31 @@
 <?php
 
 session_start();
-
 include("../config/koneksi.php");
 
 $username = $_POST["username"];
 $password = $_POST["password"];
 
-$query = mysqli_query($koneksi,"SELECT * FROM user WHERE username='$username' AND password='$password'");
-
+$query = mysqli_query($koneksi,"SELECT * FROM user WHERE username='$username'");
 $data = mysqli_fetch_assoc($query);
 
 if ($data){
 
-    $_SESSION['username'] = $data['username'];
+    // cek password hash
+    if (password_verify($password, $data['password'])) {
 
-    header("Location: ../dashboard/index.php");
-    exit;
+        $_SESSION['username'] = $data['username'];
+        $_SESSION['role'] = $data['role']; // opsional tapi penting
 
-}else{
+        header("Location: ../dashboard/index.php");
+        exit;
 
-    echo "Username atau Password salah";
+    } else {
+        echo "Password salah!";
+    }
 
+} else {
+    echo "Username tidak ditemukan!";
 }
 
 ?>

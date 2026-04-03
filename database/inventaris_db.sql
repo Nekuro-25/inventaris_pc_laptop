@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 01 Apr 2026 pada 15.58
+-- Waktu pembuatan: 03 Apr 2026 pada 12.20
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.0.30
 
@@ -68,6 +68,21 @@ INSERT INTO `lokasi` (`id_lokasi`, `nama_lokasi`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `peminjaman`
+--
+
+CREATE TABLE `peminjaman` (
+  `id` int(11) NOT NULL,
+  `id_barang` int(11) DEFAULT NULL,
+  `nama_peminjam` varchar(100) DEFAULT NULL,
+  `tanggal_pinjam` date DEFAULT NULL,
+  `tanggal_kembali` date DEFAULT NULL,
+  `status` enum('dipinjam','kembali') DEFAULT 'dipinjam'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `perbaikan`
 --
 
@@ -105,7 +120,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id_user`, `nama`, `username`, `password`, `role`) VALUES
-(2, 'tes', 'tes', 'tes', 'admin');
+(3, 'Bagus Eka Febriansyah', 'admin01', '$2y$10$IhRaokOlLAfCDkKEokR5NetH0oxdWI6nn2FOfYV1/SqevjP8ymhNe', 'admin');
 
 --
 -- Indexes for dumped tables
@@ -123,6 +138,13 @@ ALTER TABLE `inventaris`
 --
 ALTER TABLE `lokasi`
   ADD PRIMARY KEY (`id_lokasi`);
+
+--
+-- Indeks untuk tabel `peminjaman`
+--
+ALTER TABLE `peminjaman`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_barang` (`id_barang`);
 
 --
 -- Indeks untuk tabel `perbaikan`
@@ -154,6 +176,12 @@ ALTER TABLE `lokasi`
   MODIFY `id_lokasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT untuk tabel `peminjaman`
+--
+ALTER TABLE `peminjaman`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `perbaikan`
 --
 ALTER TABLE `perbaikan`
@@ -163,7 +191,7 @@ ALTER TABLE `perbaikan`
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
@@ -174,6 +202,12 @@ ALTER TABLE `user`
 --
 ALTER TABLE `inventaris`
   ADD CONSTRAINT `inventaris_ibfk_1` FOREIGN KEY (`id_lokasi`) REFERENCES `lokasi` (`id_lokasi`);
+
+--
+-- Ketidakleluasaan untuk tabel `peminjaman`
+--
+ALTER TABLE `peminjaman`
+  ADD CONSTRAINT `peminjaman_ibfk_1` FOREIGN KEY (`id_barang`) REFERENCES `inventaris` (`id_barang`);
 
 --
 -- Ketidakleluasaan untuk tabel `perbaikan`

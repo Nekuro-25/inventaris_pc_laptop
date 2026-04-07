@@ -95,6 +95,9 @@ JOIN inventaris ON peminjaman.id_barang = inventaris.id_barang
                             <?php if($row['status'] == 'dipinjam'){ ?>
                                 <a href="kembali.php?id=<?php echo $row['id']; ?>" class="btn-edit">Kembalikan</a>
                             <?php } ?>
+                            <?php if($row['status'] == 'kembali'){ ?>
+                                <a href="pr_hapus.php?id=<?php echo $row['id']; ?>" class="btn-hapus"onclick="return konfirmasiHapus()">Hapus</a>
+                            <?php } ?>
                         </td>
 
                     </tr>

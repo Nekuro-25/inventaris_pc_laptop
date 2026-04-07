@@ -13,6 +13,16 @@ $id_barang       = $_POST['id_barang'];
 $nama_peminjam   = $_POST['nama_peminjam'];
 $tanggal_pinjam  = $_POST['tanggal_pinjam'];
 
+$cek = mysqli_query($koneksi,"
+SELECT * FROM inventaris 
+WHERE id_barang='$id_barang' AND status='dipinjam'
+");
+
+if(mysqli_num_rows($cek) > 0){
+    echo "Barang sedang dipinjam!";
+    exit;
+}
+
 /* simpan ke database */
 $query = mysqli_query($koneksi,"
 INSERT INTO peminjaman

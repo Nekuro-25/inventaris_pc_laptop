@@ -9,7 +9,11 @@ if(!$isAdmin && !$isTeknisi){
 }
 
 /* ambil data inventaris untuk dropdown */
-$data_barang = mysqli_query($koneksi,"SELECT id_barang, kode_barang, nama_barang FROM inventaris");
+$data_barang = mysqli_query($koneksi,"
+SELECT id_barang, kode_barang, nama_barang 
+FROM inventaris 
+WHERE status='rusak'
+");
 
 ?>
 

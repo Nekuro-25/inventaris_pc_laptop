@@ -12,7 +12,7 @@ if(!$isAdmin && !$isTeknisi){
 $data_barang = mysqli_query($koneksi,"
 SELECT id_barang, kode_barang, nama_barang 
 FROM inventaris 
-WHERE status='rusak'
+WHERE status='rusak' or status='maintenance'
 ");
 
 ?>

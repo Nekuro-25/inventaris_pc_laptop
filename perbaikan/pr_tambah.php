@@ -13,6 +13,7 @@ $tanggal = $_POST['tanggal'];
 $kerusakan = $_POST['kerusakan'];
 $tindakan = $_POST['tindakan'];
 
+/* simpan data perbaikan */
 $query = mysqli_query($koneksi,"
 INSERT INTO perbaikan
 (id_barang, tanggal, kerusakan, tindakan)
@@ -22,11 +23,19 @@ VALUES
 
 if($query){
 
-header("Location: data_perbaikan.php");
+    /* update status inventaris jadi maintenance */
+    $update = mysqli_query($koneksi,"
+    UPDATE inventaris 
+    SET status='maintenance' 
+    WHERE id_barang='$id_barang'
+    ");
+
+    header("Location: data_perbaikan.php");
+    exit;
 
 }else{
 
-echo "Data gagal disimpan : " . mysqli_error($koneksi);
+    echo "Data gagal disimpan : " . mysqli_error($koneksi);
 
 }
 

@@ -11,15 +11,15 @@ if(!$isAdmin && !$isTeknisi){
 /* ambil id dari URL */
 $id = $_GET['id'];
 
-/* ambil data perbaikan */
+/* ambil data perbaikan + inventaris */
 $query = mysqli_query($koneksi,"
-SELECT * FROM perbaikan WHERE id_perbaikan='$id'
+SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang
+FROM perbaikan
+JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
+WHERE id_perbaikan='$id'
 ");
 
 $data = mysqli_fetch_assoc($query);
-
-/* ambil data inventaris untuk dropdown */
-$data_barang = mysqli_query($koneksi,"SELECT * FROM inventaris");
 
 ?>
 
@@ -65,29 +65,31 @@ $data_barang = mysqli_query($koneksi,"SELECT * FROM inventaris");
         </div>
 
         <div class="form-container">
+
             <form method="POST" action="pr_edit.php">
+
                 <input type="hidden" name="id_perbaikan" value="<?php echo $data['id_perbaikan']; ?>">
+
+                <!-- BARANG (READONLY) -->
                 <div class="form-group">
-                    <label>Pilih Barang</label>
-                    <select name="id_barang">
-                        <?php
-                            while($barang = mysqli_fetch_assoc($data_barang)){
-                        ?>
-                        <option value="<?php echo $barang['id_barang']; ?>"<?php if($barang['id_barang'] == $data['id_barang']){echo "selected";}?>>
-                            <?php echo $barang['kode_barang']; ?> - <?php echo $barang['nama_barang']; ?>
-                        </option>
-                        <?php } ?>
-                    </select>
+                    <label>Barang</label>
+
+                    <input type="text" 
+                           value="<?php echo $data['kode_barang'].' - '.$data['nama_barang']; ?>" 
+                           readonly>
+
+                    <!-- tetap dikirim ke backend -->
+                    <input type="hidden" name="id_barang" value="<?php echo $data['id_barang']; ?>">
                 </div>
 
                 <div class="form-group">
                     <label>Tanggal Perbaikan</label>
-                    <input type="date" name="tanggal" value="<?php echo $data['tanggal']; ?>">
+                    <input type="date" name="tanggal" value="<?php echo $data['tanggal']; ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label>Kerusakan</label>
-                    <input type="text" name="kerusakan" value="<?php echo $data['kerusakan']; ?>">
+                    <input type="text" name="kerusakan" value="<?php echo $data['kerusakan']; ?>" required>
                 </div>
 
                 <div class="form-group">

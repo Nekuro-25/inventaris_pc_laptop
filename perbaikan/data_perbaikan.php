@@ -1,11 +1,6 @@
 <?php
-session_start();
 
-if(!isset($_SESSION['username'])){
-    header("Location: ../index.php");
-    exit;
-}
-
+include("../config/auth.php");
 include("../config/koneksi.php");
 
 $query = mysqli_query($koneksi,"
@@ -58,7 +53,9 @@ JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
 
         <div class="table-container">
 
-            <a href="tambah_perbaikan.php" class="btn-tambah">+ Tambah Perbaikan</a>
+            <?php if($isAdmin || $isTeknisi){ ?>
+                <a href="tambah_perbaikan.php" class="btn-tambah">+ Tambah Perbaikan</a>
+            <?php } ?>
 
             <table>
 
@@ -91,8 +88,10 @@ JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
                         <td><?php echo $row['kerusakan']; ?></td>
                         <td><?php echo $row['tindakan']; ?></td>
                         <td>
-                            <a href="edit_perbaikan.php?id=<?php echo $row['id_perbaikan']; ?>" class="btn-edit">Edit</a>
-                            <a href="hapus_perbaikan.php?id=<?php echo $row['id_perbaikan']; ?>" class="btn-hapus"onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">Hapus</a>
+                            <?php if($isAdmin || $isTeknisi){ ?>
+                                <a href="edit_perbaikan.php?id=<?php echo $row['id_perbaikan']; ?>" class="btn-edit">Edit</a>
+                                <a href="hapus_perbaikan.php?id=<?php echo $row['id_perbaikan']; ?>" class="btn-hapus"onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">Hapus</a>
+                            <?php } ?>
                         </td>
                     
                     </tr>

@@ -1,13 +1,12 @@
 <?php
 
-session_start();
+include("../config/auth.php");
+include("../config/koneksi.php");
 
-if(!isset($_SESSION['username'])){
-    header("Location: ../index.php");
+if(!$isAdmin || $isTeknisi){
+    header("Location: data_perbaikan.php");
     exit;
 }
-
-include("../config/koneksi.php");
 
 $id_barang = $_POST['id_barang'];
 $tanggal = $_POST['tanggal'];

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 03 Apr 2026 pada 12.20
+-- Waktu pembuatan: 07 Apr 2026 pada 04.28
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.0.30
 
@@ -45,7 +45,8 @@ CREATE TABLE `inventaris` (
 --
 
 INSERT INTO `inventaris` (`id_barang`, `kode_barang`, `nama_barang`, `jenis`, `merk`, `processor`, `ram`, `storage`, `id_lokasi`, `status`) VALUES
-(6, '001/LENOVO450', 'Lenovo 001', 'PC', 'Lenovo', 'Intel Core 2 ', '2 GB', '256 GB', 5, 'rusak');
+(6, '001/LENOVO450', 'Lenovo 001', 'PC', 'Lenovo', 'Intel Core 2 ', '2 GB', '256 GB', 5, 'aktif'),
+(7, '002', 'Lenovo 002', 'Laptop', 'Lenovo', 'Intel Core 2 ', '2 GB', '256 GB', 5, 'aktif');
 
 -- --------------------------------------------------------
 
@@ -77,8 +78,16 @@ CREATE TABLE `peminjaman` (
   `nama_peminjam` varchar(100) DEFAULT NULL,
   `tanggal_pinjam` date DEFAULT NULL,
   `tanggal_kembali` date DEFAULT NULL,
-  `status` enum('dipinjam','kembali') DEFAULT 'dipinjam'
+  `status` enum('dipinjam','kembali') DEFAULT 'dipinjam',
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `peminjaman`
+--
+
+INSERT INTO `peminjaman` (`id`, `id_barang`, `nama_peminjam`, `tanggal_pinjam`, `tanggal_kembali`, `status`, `deleted_at`) VALUES
+(2, 7, 'Bagus', '2026-04-06', '2026-04-07', 'kembali', '2026-04-07 09:07:51');
 
 -- --------------------------------------------------------
 
@@ -167,7 +176,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `inventaris`
 --
 ALTER TABLE `inventaris`
-  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `lokasi`
@@ -179,7 +188,7 @@ ALTER TABLE `lokasi`
 -- AUTO_INCREMENT untuk tabel `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `perbaikan`

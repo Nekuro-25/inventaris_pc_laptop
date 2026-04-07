@@ -14,9 +14,11 @@ if ($data){
     // cek password hash
     if (password_verify($password, $data['password'])) {
 
+        session_regenerate_id(true);
+        
         $_SESSION['username'] = $data['username'];
-        $_SESSION['role'] = $data['role']; // opsional tapi penting
-
+        $_SESSION['role'] = $data['role'];
+        
         header("Location: ../dashboard/index.php");
         exit;
 

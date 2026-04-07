@@ -7,6 +7,12 @@ if(!isset($_SESSION['username'])){
     exit;
 }
 
+/* cek role admin */
+if($_SESSION['role'] != 'admin'){
+    echo "Akses ditolak!";
+    exit;
+}
+
 include("../config/koneksi.php");
 
 $nama = $_POST['nama'];

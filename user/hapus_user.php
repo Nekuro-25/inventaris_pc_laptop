@@ -1,19 +1,12 @@
 <?php
 
-session_start();
-
-if(!isset($_SESSION['username'])){
-    header("Location: ../index.php");
-    exit;
-}
-
-/* cek role admin */
-if($_SESSION['role'] != 'admin'){
-    echo "Akses ditolak!";
-    exit;
-}
-
+include("../config/auth.php");
 include("../config/koneksi.php");
+
+if(!$isAdmin){
+    header("Location: data.php");
+    exit;
+}
 
 $id = $_GET['id'];
 

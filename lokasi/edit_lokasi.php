@@ -1,13 +1,7 @@
 <?php
 
-session_start();
-
-if(!isset($_SESSION['username'])){
-    header("Location: ../index.php");
-    exit;
-}
-
-include "../config/koneksi.php";
+include("../config/auth.php");
+include("../config/koneksi.php");
 
 $id = $_GET['id_lokasi'];
 

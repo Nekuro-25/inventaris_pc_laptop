@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+include("../config/auth.php");
 include("../config/koneksi.php");
 
 $username = $_POST["username"];

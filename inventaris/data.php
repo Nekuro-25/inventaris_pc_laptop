@@ -1,11 +1,6 @@
 <?php
-session_start();
 
-if(!isset($_SESSION['username'])){
-    header("Location: ../index.php");
-    exit;
-}
-
+include("../config/auth.php");
 include("../config/koneksi.php");
 
 $query = mysqli_query($koneksi,"

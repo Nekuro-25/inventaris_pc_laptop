@@ -27,9 +27,11 @@ if($row['status'] == 'dipinjam'){
     ");
 }
 
-/* hapus data */
+/* soft delete */
 $query = mysqli_query($koneksi,"
-DELETE FROM peminjaman WHERE id='$id'
+UPDATE peminjaman 
+SET deleted_at = NOW() 
+WHERE id='$id'
 ");
 
 if($query){
@@ -39,7 +41,7 @@ if($query){
 
 }else{
 
-    echo "Data gagal dihapus : " . mysqli_error($koneksi);
+    echo "Gagal menghapus data: " . mysqli_error($koneksi);
 
 }
 

@@ -12,6 +12,7 @@ $query = mysqli_query($koneksi,"
 SELECT peminjaman.*, inventaris.kode_barang, inventaris.nama_barang 
 FROM peminjaman
 JOIN inventaris ON peminjaman.id_barang = inventaris.id_barang
+WHERE peminjaman.deleted_at IS NULL
 ");
 ?>
 

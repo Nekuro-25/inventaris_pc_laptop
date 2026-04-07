@@ -3,7 +3,7 @@
 include("../config/auth.php");
 include("../config/koneksi.php");
 
-if(!$isAdmin || $isTeknisi){
+if(!$isAdmin && !$isTeknisi){
     header("Location: data_perbaikan.php");
     exit;
 }

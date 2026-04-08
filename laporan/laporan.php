@@ -4,7 +4,11 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 blockUser();
 
-$query = mysqli_query($koneksi,"SELECT * FROM inventaris");
+$query = mysqli_query($koneksi,"
+SELECT inventaris.*, lokasi.nama_lokasi 
+FROM inventaris
+JOIN lokasi ON inventaris.id_lokasi = lokasi.id_lokasi
+");
 
 
 ?>
@@ -113,7 +117,7 @@ $query = mysqli_query($koneksi,"SELECT * FROM inventaris");
                     <td><?= $row['nama_barang'] ?></td>
                     <td><?= $row['jenis'] ?></td>
                     <td><?= $row['merk'] ?></td>
-                    <td><?= $row['lokasi'] ?></td>
+                    <td><?= $row['nama_lokasi'] ?></td>
                     <td><?= $row['status'] ?></td>
                 </tr>
                 <?php } ?>

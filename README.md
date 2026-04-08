@@ -3,10 +3,10 @@ pasang xampp, import database yang ada di folder data
 Saran upgrade project
 
 PRIORITAS WAJIB
-✅ Enkripsi password
-✅ Tambah fitur peminjaman
-Batasi akses berdasarkan role
-Tambah dashboard statistic
+(done) Enkripsi password,
+(done) Tambah fitur peminjaman,
+(done) Batasi akses berdasarkan role,
+Tambah dashboard statistic.
 
 PRIORITAS MENENGAH
 Export laporan (PDF)

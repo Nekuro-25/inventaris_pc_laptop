@@ -69,17 +69,17 @@ if($isTeknisi){
 /* ================= USER ================= */
 if($isUser){
 
-    $username = $_SESSION['username'];
+    $user_id = $_SESSION['id_pengguna'];
 
     $peminjaman_saya = getTotal($koneksi, "
         SELECT COUNT(*) as total FROM peminjaman 
-        WHERE nama_peminjam='$username' 
+        WHERE id_pengguna='$user_id' 
         AND deleted_at IS NULL
     ");
 
     $dipinjam_saya = getTotal($koneksi, "
         SELECT COUNT(*) as total FROM peminjaman 
-        WHERE nama_peminjam='$username' 
+        WHERE id_pengguna='$user_id' 
         AND status='dipinjam' 
         AND deleted_at IS NULL
     ");

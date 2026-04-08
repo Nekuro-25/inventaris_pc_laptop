@@ -12,7 +12,7 @@ if(!isset($_SESSION['username'])){
     exit;
 }
 
-/* ambil data user terbaru dari database (PENTING) */
+/* ambil data user terbaru dari database */
 $username = $_SESSION['username'];
 
 $query = mysqli_query($koneksi, "
@@ -23,15 +23,16 @@ $query = mysqli_query($koneksi, "
 
 $user = mysqli_fetch_assoc($query);
 
-/* jika user tidak ditemukan / sudah dihapus */
+/* jika user tidak ditemukan */
 if(!$user){
     session_destroy();
     header("Location: ../index.php");
     exit;
 }
 
-/* set ulang session biar sinkron */
+/* sinkronisasi session */
 $_SESSION['role'] = $user['role'];
+$_SESSION['id_pengguna'] = $user['id_pengguna']; 
 
 /* role */
 $isAdmin   = ($user['role'] == 'admin');
@@ -42,30 +43,24 @@ $isUser    = ($user['role'] == 'user');
    HELPER AKSES
    ========================= */
 
-/* hanya admin */
 function onlyAdmin(){
     global $isAdmin;
-
     if(!$isAdmin){
         header("Location: ../dashboard/index.php");
         exit;
     }
 }
 
-/* admin + teknisi */
 function adminOrTeknisi(){
     global $isAdmin, $isTeknisi;
-
     if(!$isAdmin && !$isTeknisi){
         header("Location: ../dashboard/index.php");
         exit;
     }
 }
 
-/* blok user biasa */
 function blockUser(){
     global $isUser;
-
     if($isUser){
         header("Location: ../dashboard/index.php");
         exit;

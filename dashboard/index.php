@@ -16,36 +16,72 @@ function getTotal($koneksi, $query){
 /* ================= ADMIN ================= */
 if($isAdmin){
 
-    $total_pc = getTotal($koneksi, "SELECT COUNT(*) as total FROM inventaris WHERE jenis='PC'");
-    $total_laptop = getTotal($koneksi, "SELECT COUNT(*) as total FROM inventaris WHERE jenis='Laptop'");
-    $total_rusak = getTotal($koneksi, "SELECT COUNT(*) as total FROM inventaris WHERE kondisi='rusak'");
-    $total_inventaris = getTotal($koneksi, "SELECT COUNT(*) as total FROM inventaris");
+    $total_pc = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM inventaris 
+        WHERE jenis='PC' AND deleted_at IS NULL
+    ");
 
-    $total_peminjaman = getTotal($koneksi, "SELECT COUNT(*) as total FROM peminjaman");
-    $sedang_dipinjam = getTotal($koneksi, "SELECT COUNT(*) as total FROM peminjaman WHERE status='dipinjam'");
+    $total_laptop = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM inventaris 
+        WHERE jenis='Laptop' AND deleted_at IS NULL
+    ");
 
-    $total_user = getTotal($koneksi, "SELECT COUNT(*) as total FROM user");
+    $total_rusak = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM inventaris 
+        WHERE status='rusak' AND deleted_at IS NULL
+    ");
+
+    $total_inventaris = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM inventaris 
+        WHERE deleted_at IS NULL
+    ");
+
+    $total_peminjaman = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM peminjaman 
+        WHERE deleted_at IS NULL
+    ");
+
+    $sedang_dipinjam = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM peminjaman 
+        WHERE status='dipinjam' AND deleted_at IS NULL
+    ");
+
+    $total_user = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM pengguna 
+        WHERE deleted_at IS NULL
+    ");
 }
 
 /* ================= TEKNISI ================= */
 if($isTeknisi){
 
-    $total_rusak = getTotal($koneksi, "SELECT COUNT(*) as total FROM inventaris WHERE kondisi='rusak'");
-    $total_perbaikan = getTotal($koneksi, "SELECT COUNT(*) as total FROM perbaikan");
+    $total_rusak = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM inventaris 
+        WHERE status='rusak' AND deleted_at IS NULL
+    ");
+
+    $total_perbaikan = getTotal($koneksi, "
+        SELECT COUNT(*) as total FROM perbaikan 
+        WHERE deleted_at IS NULL
+    ");
 }
 
 /* ================= USER ================= */
 if($isUser){
 
-    $user_id = $_SESSION['id_user'];
+    $username = $_SESSION['username'];
 
     $peminjaman_saya = getTotal($koneksi, "
-        SELECT COUNT(*) as total FROM peminjaman WHERE user_id='$user_id'
+        SELECT COUNT(*) as total FROM peminjaman 
+        WHERE nama_peminjam='$username' 
+        AND deleted_at IS NULL
     ");
 
     $dipinjam_saya = getTotal($koneksi, "
         SELECT COUNT(*) as total FROM peminjaman 
-        WHERE user_id='$user_id' AND status='dipinjam'
+        WHERE nama_peminjam='$username' 
+        AND status='dipinjam' 
+        AND deleted_at IS NULL
     ");
 }
 
@@ -58,7 +94,6 @@ if($isUser){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Inventaris</title>
 
-<!-- FORCE RELOAD CSS -->
 <link rel="stylesheet" href="../css/dashboard.css?v=2">
 
 </head>
@@ -95,7 +130,10 @@ if($isUser){
 
         <div class="topbar">
             <h1>Dashboard</h1>
-            <p>Halo, <?= $_SESSION['username']; ?> (<?= $_SESSION['role']; ?>)</p>
+            <p>
+                Halo, <?= htmlspecialchars($_SESSION['username']); ?> 
+                (<?= htmlspecialchars($_SESSION['role']); ?>)
+            </p>
         </div>
 
         <div class="cards">

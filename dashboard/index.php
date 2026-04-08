@@ -41,20 +41,22 @@ SELECT COUNT(*) as total FROM inventaris
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <h2>Inventaris</h2>
+        <h2>Dashboard</h2>
 
         <ul>
             <li><a href="index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
 
+            <!-- ADMIN & TEKNISI -->
             <?php if($isAdmin || $isTeknisi){ ?>
-                <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-                <li><a href="../laporan/laporan.php">Laporan</a></li>
             <?php } ?>
 
+            <!-- KHUSUS ADMIN -->
             <?php if($isAdmin){ ?>
+                <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
+                <li><a href="../laporan/laporan.php">Laporan</a></li>
                 <li><a href="../user/data_user.php">Manajemen User</a></li>
             <?php } ?>
 

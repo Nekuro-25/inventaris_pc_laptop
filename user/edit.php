@@ -19,7 +19,7 @@ $data = mysqli_fetch_assoc($query);
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Edit User</title>
+<title>Edit Pengguna</title>
 <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 
@@ -27,20 +27,33 @@ $data = mysqli_fetch_assoc($query);
 
 <div class="container">
 
+    <!-- Sidebar -->
     <div class="sidebar">
-        <h2>Inventaris</h2>
+        <h2>Edit User</h2>
+
         <ul>
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
-            <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
-            <li><a href="../peminjaman/index.php">Peminjaman</a></li>
-            <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
-            <li><a href="../laporan/laporan.php">Laporan</a></li>
-            <li><a href="data_user.php">Manajemen User</a></li>
+
+            <!-- ADMIN & TEKNISI -->
+            <?php if($isAdmin || $isTeknisi){ ?>
+                <li><a href="../peminjaman/index.php">Peminjaman</a></li>
+                <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
+            <?php } ?>
+
+            <!-- KHUSUS ADMIN -->
+            <?php if($isAdmin){ ?>
+                <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
+                <li><a href="../laporan/laporan.php">Laporan</a></li>
+                <li><a href="data_user.php">Manajemen User</a></li>
+            <?php } ?>
+
             <li><a href="../logout.php">Logout</a></li>
         </ul>
+
     </div>
 
+    <!-- Main Content -->
     <div class="main">
 
         <div class="topbar">

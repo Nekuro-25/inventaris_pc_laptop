@@ -6,7 +6,11 @@ adminOrTeknisi();
 blockUser();
 
 /* ambil data inventaris */
-$data_barang = mysqli_query($koneksi,"SELECT * FROM inventaris WHERE status='aktif'");
+$data_barang = mysqli_query($koneksi,"
+SELECT * FROM inventaris 
+WHERE status='aktif' 
+AND deleted_at IS NULL
+");
 
 ?>
 

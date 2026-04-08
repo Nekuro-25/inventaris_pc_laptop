@@ -5,7 +5,12 @@ include("../config/koneksi.php");
 adminOrTeknisi();
 blockUser();
 
-/* ambil data peminjaman berdasarkan id */
+/* VALIDASI ID */
+if(!isset($_GET['id'])){
+    header("Location: index.php");
+    exit;
+}
+
 $id = $_GET['id'];
 
 $data = mysqli_query($koneksi,"
@@ -13,10 +18,16 @@ SELECT peminjaman.*, inventaris.kode_barang, inventaris.nama_barang
 FROM peminjaman
 JOIN inventaris ON peminjaman.id_barang = inventaris.id_barang
 WHERE peminjaman.id='$id'
+AND peminjaman.deleted_at IS NULL
 ");
 
 $row = mysqli_fetch_assoc($data);
 
+/* VALIDASI DATA */
+if(!$row){
+    echo "Data tidak ditemukan!";
+    exit;
+}
 ?>
 
 <!DOCTYPE html>

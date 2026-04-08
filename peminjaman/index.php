@@ -10,6 +10,7 @@ SELECT peminjaman.*, inventaris.kode_barang, inventaris.nama_barang
 FROM peminjaman
 JOIN inventaris ON peminjaman.id_barang = inventaris.id_barang
 WHERE peminjaman.deleted_at IS NULL
+AND inventaris.deleted_at IS NULL
 ");
 ?>
 
@@ -92,12 +93,12 @@ WHERE peminjaman.deleted_at IS NULL
                     <tr>
 
                         <td><?php echo $no++; ?></td>
-                        <td><?php echo $row['kode_barang']; ?></td>
-                        <td><?php echo $row['nama_barang']; ?></td>
-                        <td><?php echo $row['nama_peminjam']; ?></td>
-                        <td><?php echo $row['tanggal_pinjam']; ?></td>
-                        <td><?php echo $row['tanggal_kembali']; ?></td>
-                        <td><?php echo $row['status']; ?></td>
+                        <td><?= htmlspecialchars($row['kode_barang']); ?></td>
+                        <td><?= htmlspecialchars($row['nama_barang']); ?></td>
+                        <td><?= htmlspecialchars($row['nama_peminjam']); ?></td>
+                        <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
+                        <td><?= htmlspecialchars($row['tanggal_kembali']); ?></td>
+                        <td><?= htmlspecialchars($row['status']); ?></td>
                         <td>
                             <?php if($row['status'] == 'dipinjam'){ ?>
                                 <a href="kembali.php?id=<?php echo $row['id']; ?>" class="btn-edit">Kembalikan</a>

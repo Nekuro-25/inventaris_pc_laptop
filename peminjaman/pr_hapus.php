@@ -5,16 +5,29 @@ include("../config/koneksi.php");
 adminOrTeknisi();
 blockUser();
 
+/* VALIDASI ID */
+if(!isset($_GET['id'])){
+    header("Location: index.php");
+    exit;
+}
+
 $id = $_GET['id'];
 
-/* ambil data dulu */
+/* ambil data */
 $data = mysqli_query($koneksi,"
-SELECT * FROM peminjaman WHERE id='$id'
+SELECT * FROM peminjaman 
+WHERE id='$id' AND deleted_at IS NULL
 ");
 
 $row = mysqli_fetch_assoc($data);
 
-/* kalau masih dipinjam, kembalikan status barang */
+/* VALIDASI DATA */
+if(!$row){
+    echo "Data tidak ditemukan!";
+    exit;
+}
+
+/* kalau masih dipinjam */
 if($row['status'] == 'dipinjam'){
     mysqli_query($koneksi,"
     UPDATE inventaris 
@@ -31,14 +44,9 @@ WHERE id='$id'
 ");
 
 if($query){
-
     header("Location: index.php");
     exit;
-
 }else{
-
     echo "Gagal menghapus data: " . mysqli_error($koneksi);
-
 }
-
 ?>

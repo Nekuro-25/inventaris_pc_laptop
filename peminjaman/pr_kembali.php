@@ -5,9 +5,21 @@ include("../config/koneksi.php");
 adminOrTeknisi();
 blockUser();
 
+/* VALIDASI POST */
+if(!isset($_POST['id']) || !isset($_POST['id_barang'])){
+    header("Location: index.php");
+    exit;
+}
+
 $id = $_POST['id'];
 $id_barang = $_POST['id_barang'];
 $tanggal_kembali = $_POST['tanggal_kembali'];
+
+/* VALIDASI TANGGAL */
+if(empty($tanggal_kembali)){
+    echo "Tanggal kembali wajib diisi!";
+    exit;
+}
 
 /* update peminjaman */
 $query = mysqli_query($koneksi,"
@@ -18,7 +30,6 @@ WHERE id='$id'
 
 if($query){
 
-    /* update status inventaris */
     mysqli_query($koneksi,"
     UPDATE inventaris 
     SET status='aktif' 
@@ -29,9 +40,6 @@ if($query){
     exit;
 
 }else{
-
     echo "Gagal mengembalikan: " . mysqli_error($koneksi);
-
 }
-
 ?>

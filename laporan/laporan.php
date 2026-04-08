@@ -75,14 +75,14 @@ $query = mysqli_query($koneksi,"SELECT * FROM inventaris");
                 <div class="filter-group">
                     <label>Jenis Barang</label>
                     <select>
-                    <option>Semua</option>
-                    <option>PC</option>
-                    <option>Laptop</option>
+                        <option>Semua</option>
+                        <option>PC</option>
+                        <option>Laptop</option>
                     </select>
                 </div>
 
                 <button class="btn-filter">Tampilkan</button>
-                <button class="btn-cetak">Cetak</button>
+                <a href="cetak_pdf.php" target="_blank" class="btn-cetak">Cetak PDF</a>
 
             </div>
 
@@ -103,8 +103,20 @@ $query = mysqli_query($koneksi,"SELECT * FROM inventaris");
                 </thead>
 
                 <tbody>
-
-
+                <?php
+                $no = 1;
+                while($row = mysqli_fetch_array($query)){
+                ?>
+                <tr>
+                    <td><?= $no++ ?></td>
+                    <td><?= $row['kode_barang'] ?></td>
+                    <td><?= $row['nama_barang'] ?></td>
+                    <td><?= $row['jenis'] ?></td>
+                    <td><?= $row['merk'] ?></td>
+                    <td><?= $row['lokasi'] ?></td>
+                    <td><?= $row['status'] ?></td>
+                </tr>
+                <?php } ?>
                 </tbody>
 
             </table>

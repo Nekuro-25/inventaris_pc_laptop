@@ -4,7 +4,7 @@ function konfirmasiHapus(){
 
     if(konfirmasi1){
 
-        var konfirmasi2 = confirm("Data yang dihapus tidak bisa dikembalikan. Lanjutkan?");
+        var konfirmasi2 = confirm("Data akan disembunyikan (soft delete). Lanjutkan?");
 
         if(konfirmasi2){
             return true;

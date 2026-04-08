@@ -4,12 +4,14 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 blockUser();
 
+// FIX: tambah soft delete
 $query = mysqli_query($koneksi,"
 SELECT inventaris.*, lokasi.nama_lokasi 
 FROM inventaris
 JOIN lokasi ON inventaris.id_lokasi = lokasi.id_lokasi
+WHERE inventaris.deleted_at IS NULL
+AND lokasi.deleted_at IS NULL
 ");
-
 
 ?>
 
@@ -35,13 +37,11 @@ JOIN lokasi ON inventaris.id_lokasi = lokasi.id_lokasi
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
 
-            <!-- ADMIN & TEKNISI -->
             <?php if($isAdmin || $isTeknisi){ ?>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <?php } ?>
 
-            <!-- KHUSUS ADMIN -->
             <?php if($isAdmin){ ?>
                 <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="laporan.php">Laporan</a></li>
@@ -85,7 +85,9 @@ JOIN lokasi ON inventaris.id_lokasi = lokasi.id_lokasi
                     </select>
                 </div>
 
-                <button class="btn-filter">Tampilkan</button>
+                <!-- FIX: tambahkan type button -->
+                <button type="button" class="btn-filter">Tampilkan</button>
+
                 <a href="cetak_pdf.php" target="_blank" class="btn-cetak">Cetak PDF</a>
 
             </div>
@@ -113,12 +115,12 @@ JOIN lokasi ON inventaris.id_lokasi = lokasi.id_lokasi
                 ?>
                 <tr>
                     <td><?= $no++ ?></td>
-                    <td><?= $row['kode_barang'] ?></td>
-                    <td><?= $row['nama_barang'] ?></td>
-                    <td><?= $row['jenis'] ?></td>
-                    <td><?= $row['merk'] ?></td>
-                    <td><?= $row['nama_lokasi'] ?></td>
-                    <td><?= $row['status'] ?></td>
+                    <td><?= htmlspecialchars($row['kode_barang']) ?></td>
+                    <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                    <td><?= htmlspecialchars($row['jenis']) ?></td>
+                    <td><?= htmlspecialchars($row['merk']) ?></td>
+                    <td><?= htmlspecialchars($row['nama_lokasi']) ?></td>
+                    <td><?= htmlspecialchars($row['status']) ?></td>
                 </tr>
                 <?php } ?>
                 </tbody>

@@ -13,11 +13,13 @@ require_once '../vendor/autoload.php';
 
 use Dompdf\Dompdf;
 
-// ambil data inventaris
+// ambil data inventaris (FIX: tambah soft delete)
 $query = mysqli_query($koneksi,"
 SELECT inventaris.*, lokasi.nama_lokasi 
 FROM inventaris
 JOIN lokasi ON inventaris.id_lokasi = lokasi.id_lokasi
+WHERE inventaris.deleted_at IS NULL
+AND lokasi.deleted_at IS NULL
 ");
 
 $data = [];
@@ -112,12 +114,12 @@ ob_start();
     ?>
         <tr>
             <td><?= $no++ ?></td>
-            <td><?= $row['kode_barang'] ?></td>
-            <td><?= $row['nama_barang'] ?></td>
-            <td><?= $row['jenis'] ?></td>
-            <td><?= $row['merk'] ?></td>
-            <td><?= $row['nama_lokasi'] ?></td>
-            <td><?= $row['status'] ?></td>
+            <td><?= htmlspecialchars($row['kode_barang']) ?></td>
+            <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+            <td><?= htmlspecialchars($row['jenis']) ?></td>
+            <td><?= htmlspecialchars($row['merk']) ?></td>
+            <td><?= htmlspecialchars($row['nama_lokasi']) ?></td>
+            <td><?= htmlspecialchars($row['status']) ?></td>
         </tr>
     <?php } ?>
     </tbody>
@@ -145,5 +147,6 @@ $dompdf->setPaper('A4', 'portrait');
 // render
 $dompdf->render();
 
-// tampilkan di browser (preview)
+// tampilkan di browser
 $dompdf->stream("laporan_inventaris.pdf", array("Attachment" => false));
+?>

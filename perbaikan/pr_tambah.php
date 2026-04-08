@@ -2,11 +2,8 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
-
-if(!$isAdmin && !$isTeknisi){
-    header("Location: data_perbaikan.php");
-    exit;
-}
+adminOrTeknisi();
+blockUser();
 
 $id_barang = $_POST['id_barang'];
 $tanggal = $_POST['tanggal'];

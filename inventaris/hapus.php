@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+blockUser();
 
 /* ambil id dari url */
 $id = $_GET['id'];

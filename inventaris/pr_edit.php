@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+blockUser();
 
 $id = $_POST['id_barang'];
 

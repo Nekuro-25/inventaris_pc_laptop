@@ -3,11 +3,6 @@
 include("../config/auth.php");
 include("../config/koneksi.php");
 
-if(!$isAdmin){
-    header("Location: data_user.php");
-    exit;
-}
-
 $nama = $_POST['nama'];
 $username = $_POST['username'];
 $password = $_POST['password'];

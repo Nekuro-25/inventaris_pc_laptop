@@ -2,6 +2,8 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+adminOrTeknisi();
+blockUser();
 
 /* ambil data peminjaman berdasarkan id */
 $id = $_GET['id'];

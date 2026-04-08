@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+blockUser();
 
 if(isset($_POST['simpan'])){
 

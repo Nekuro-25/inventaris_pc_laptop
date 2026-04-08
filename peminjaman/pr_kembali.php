@@ -2,6 +2,8 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+adminOrTeknisi();
+blockUser();
 
 $id = $_POST['id'];
 $id_barang = $_POST['id_barang'];

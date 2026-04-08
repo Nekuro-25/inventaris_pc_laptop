@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+onlyAdmin();
 
 /* ambil data user */
 $query = mysqli_query($koneksi,"SELECT * FROM user");

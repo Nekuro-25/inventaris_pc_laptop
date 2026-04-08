@@ -2,12 +2,8 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
-
-/* hanya admin & teknisi */
-if(!$isAdmin && !$isTeknisi){
-    header("Location: data_perbaikan.php");
-    exit;
-}
+adminOrTeknisi();
+blockUser();
 
 $id = $_GET['id'];
 

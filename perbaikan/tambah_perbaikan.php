@@ -2,11 +2,8 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
-
-if(!$isAdmin && !$isTeknisi){
-    header("Location: data_perbaikan.php");
-    exit;
-}
+adminOrTeknisi();
+blockUser();
 
 /* ambil data inventaris untuk dropdown */
 $data_barang = mysqli_query($koneksi,"

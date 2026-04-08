@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+blockUser();
 
 /* ambil data lokasi */
 $data_lokasi = mysqli_query($koneksi,"SELECT * FROM lokasi");

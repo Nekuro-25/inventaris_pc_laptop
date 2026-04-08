@@ -2,11 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
-
-if(!$isAdmin){
-    header("Location: data_user.php");
-    exit;
-}
+onlyAdmin();
 
 $id = $_GET['id'];
 

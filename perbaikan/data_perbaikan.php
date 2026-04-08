@@ -2,6 +2,8 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+adminOrTeknisi();
+blockUser();
 
 $query = mysqli_query($koneksi,"
 SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang

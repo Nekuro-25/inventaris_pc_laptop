@@ -2,6 +2,8 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+adminOrTeknisi();
+blockUser();
 
 /* ambil data inventaris */
 $data_barang = mysqli_query($koneksi,"SELECT * FROM inventaris WHERE status='aktif'");

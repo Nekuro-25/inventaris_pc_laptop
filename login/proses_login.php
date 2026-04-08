@@ -1,6 +1,6 @@
 <?php
+session_start(); // WAJIB
 
-include("../config/auth.php");
 include("../config/koneksi.php");
 
 $username = $_POST["username"];
@@ -10,7 +10,7 @@ $query = mysqli_query($koneksi,"SELECT * FROM user WHERE username='$username'");
 $data = mysqli_fetch_assoc($query);
 
 if ($data){
-
+    
     // cek password hash
     if (password_verify($password, $data['password'])) {
 
@@ -29,5 +29,4 @@ if ($data){
 } else {
     echo "Username tidak ditemukan!";
 }
-
 ?>

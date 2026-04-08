@@ -4,7 +4,10 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 blockUser();
 
-$query = mysqli_query($koneksi,"SELECT * FROM lokasi");
+$query = mysqli_query($koneksi,"
+SELECT * FROM lokasi 
+WHERE deleted_at IS NULL
+");
 
 ?>
 

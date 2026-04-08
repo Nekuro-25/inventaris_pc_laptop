@@ -8,7 +8,12 @@ if(isset($_GET['id_lokasi'])){
 
     $id = $_GET['id_lokasi'];
 
-    $query = mysqli_query($koneksi,"DELETE FROM lokasi WHERE id_lokasi='$id'");
+    // FIX: soft delete
+    $query = mysqli_query($koneksi,"
+    UPDATE lokasi 
+    SET deleted_at = NOW() 
+    WHERE id_lokasi='$id'
+    ");
 
     if($query){
         header("Location: lokasi.php");
@@ -18,10 +23,7 @@ if(isset($_GET['id_lokasi'])){
     }
 
 }else{
-
     header("Location: lokasi.php");
     exit;
-
 }
-
 ?>

@@ -6,16 +6,22 @@ blockUser();
 
 $id = $_GET['id_lokasi'];
 
-$query = mysqli_query($koneksi,"SELECT * FROM lokasi WHERE id_lokasi='$id'");
+$query = mysqli_query($koneksi,"
+SELECT * FROM lokasi 
+WHERE id_lokasi='$id' 
+AND deleted_at IS NULL
+");
 $data = mysqli_fetch_assoc($query);
 
 if(isset($_POST['update'])){
 
     $nama_lokasi = $_POST['nama_lokasi'];
 
-    $update = mysqli_query($koneksi,"UPDATE lokasi SET 
-        nama_lokasi='$nama_lokasi'
-        WHERE id_lokasi='$id'
+    $update = mysqli_query($koneksi,"
+    UPDATE lokasi SET 
+    nama_lokasi='$nama_lokasi',
+    updated_at=NOW()
+    WHERE id_lokasi='$id'
     ");
 
     if($update){

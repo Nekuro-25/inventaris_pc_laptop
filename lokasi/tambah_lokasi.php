@@ -6,9 +6,12 @@ blockUser();
 
 if(isset($_POST['simpan'])){
 
-    $nama_lokasi = $_POST['nama_lokasi'];
+    $nama_lokasi = mysqli_real_escape_string($koneksi, $_POST['nama_lokasi']);
 
-    $query = mysqli_query($koneksi,"INSERT INTO lokasi (nama_lokasi) VALUES ('$nama_lokasi')");
+    $query = mysqli_query($koneksi,"
+    INSERT INTO lokasi (nama_lokasi) 
+    VALUES ('$nama_lokasi')
+    ");
 
     if($query){
         header("Location: lokasi.php");
@@ -17,7 +20,6 @@ if(isset($_POST['simpan'])){
         echo "Data gagal disimpan";
     }
 }
-
 ?>
 
 <!DOCTYPE html>

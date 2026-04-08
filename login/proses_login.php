@@ -1,23 +1,29 @@
 <?php
-session_start(); // WAJIB
+session_start();
 
 include("../config/koneksi.php");
 
 $username = $_POST["username"];
 $password = $_POST["password"];
 
-$query = mysqli_query($koneksi,"SELECT * FROM user WHERE username='$username'");
+// FIX: pakai tabel pengguna + soft delete
+$query = mysqli_query($koneksi,"
+SELECT * FROM pengguna 
+WHERE username='$username' 
+AND deleted_at IS NULL
+");
+
 $data = mysqli_fetch_assoc($query);
 
 if ($data){
     
-    // cek password hash
     if (password_verify($password, $data['password'])) {
 
         session_regenerate_id(true);
         
         $_SESSION['username'] = $data['username'];
         $_SESSION['role'] = $data['role'];
+        $_SESSION['id_pengguna'] = $data['id_pengguna']; // ✅ penting
         
         header("Location: ../dashboard/index.php");
         exit;

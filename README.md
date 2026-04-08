@@ -6,7 +6,7 @@ PRIORITAS WAJIB
 (done) Enkripsi password,
 (done) Tambah fitur peminjaman,
 (done) Batasi akses berdasarkan role,
-Tambah dashboard statistic.
+(done) Tambah dashboard statistic.
 
 PRIORITAS MENENGAH
 Export laporan (PDF)

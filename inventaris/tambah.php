@@ -119,9 +119,9 @@ $data_lokasi = mysqli_query($koneksi,"SELECT * FROM lokasi");
                 <div class="form-group">
                     <label>Status</label>
                     <select name="status">
-                        <option value="aktif">Aktif</option>
+                        <option value="tersedia">Tersedia</option>
+                        <option value="dipinjam">Dipinjam</option>
                         <option value="rusak">Rusak</option>
-                        <option value="maintenance">Maintenance</option>
                     </select>
                 </div>
 

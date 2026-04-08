@@ -9,13 +9,18 @@ $id = $_GET['id'];
 
 /* ambil data inventaris */
 $query = mysqli_query($koneksi,"
-SELECT * FROM inventaris WHERE id_barang='$id'
+SELECT * FROM inventaris 
+WHERE id_barang='$id' 
+AND deleted_at IS NULL
 ");
 
 $data = mysqli_fetch_assoc($query);
 
 /* ambil data lokasi untuk dropdown */
-$data_lokasi = mysqli_query($koneksi,"SELECT * FROM lokasi");
+$data_lokasi = mysqli_query($koneksi,"
+SELECT * FROM lokasi 
+WHERE deleted_at IS NULL
+");
 
 ?>
 <!DOCTYPE html>
@@ -127,9 +132,9 @@ $data_lokasi = mysqli_query($koneksi,"SELECT * FROM lokasi");
                     <label>Status</label>
 
                     <select name="status">
-                        <option value="aktif" <?php if($data['status']=="aktif") echo "selected"; ?>>Aktif</option>
-                        <option value="rusak" <?php if($data['status']=="rusak") echo "selected"; ?>>Rusak</option>                        
-                        <option value="maintenance" <?php if($data['status']=="maintenance") echo "selected"; ?>>Maintenance</option>
+                        <option value="tersedia" <?php if($data['status']=="tersedia") echo "selected"; ?>>Tersedia</option>
+                        <option value="dipinjam" <?php if($data['status']=="dipinjam") echo "selected"; ?>>Dipinjam</option>
+                        <option value="rusak" <?php if($data['status']=="rusak") echo "selected"; ?>>Rusak</option>
                     </select>
 
                 </div>

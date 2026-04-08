@@ -26,7 +26,8 @@ processor='$processor',
 ram='$ram',
 storage='$storage',
 id_lokasi='$id_lokasi',
-status='$status'
+status='$status',
+updated_at=NOW()
 WHERE id_barang='$id'
 ");
 

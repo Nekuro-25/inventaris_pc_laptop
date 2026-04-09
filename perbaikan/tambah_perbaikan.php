@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+
 adminOrTeknisi();
 blockUser();
 
@@ -9,7 +10,7 @@ blockUser();
 $data_barang = mysqli_query($koneksi,"
 SELECT id_barang, kode_barang, nama_barang 
 FROM inventaris 
-WHERE (status='rusak' OR status='maintenance')
+WHERE status='rusak'
 AND deleted_at IS NULL
 ");
 
@@ -44,13 +45,11 @@ if(!$data_barang){
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
 
-            <!-- ADMIN & TEKNISI -->
             <?php if($isAdmin || $isTeknisi){ ?>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="data_perbaikan.php">Perbaikan</a></li>
             <?php } ?>
 
-            <!-- KHUSUS ADMIN -->
             <?php if($isAdmin){ ?>
                 <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="../laporan/laporan.php">Laporan</a></li>
@@ -78,21 +77,25 @@ if(!$data_barang){
 
                     <select name="id_barang" required>
                         <option value="">-- Pilih Barang --</option>
-                        <?php
-                        while($barang = mysqli_fetch_assoc($data_barang)){
-                        ?>
-                        <option value="<?php echo htmlspecialchars($barang['id_barang']); ?>">
-                            <?php echo htmlspecialchars($barang['kode_barang']); ?> - 
-                            <?php echo htmlspecialchars($barang['nama_barang']); ?>
-                        </option>
+
+                        <?php if(mysqli_num_rows($data_barang) > 0){ ?>
+                            <?php while($barang = mysqli_fetch_assoc($data_barang)){ ?>
+                                <option value="<?= htmlspecialchars($barang['id_barang']); ?>">
+                                    <?= htmlspecialchars($barang['kode_barang']); ?> - 
+                                    <?= htmlspecialchars($barang['nama_barang']); ?>
+                                </option>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <option value="">Tidak ada barang rusak</option>
                         <?php } ?>
+
                     </select>
 
                 </div>
 
                 <div class="form-group">
                     <label>Tanggal Perbaikan</label>
-                    <input type="date" name="tanggal" required>
+                    <input type="date" name="tanggal" value="<?= date('Y-m-d'); ?>" required>
                 </div>
 
                 <div class="form-group">

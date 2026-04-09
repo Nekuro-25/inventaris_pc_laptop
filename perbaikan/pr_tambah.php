@@ -13,9 +13,9 @@ if($_SERVER['REQUEST_METHOD'] !== 'POST'){
 
 /* VALIDASI INPUT */
 if(
-    !isset($_POST['id_barang']) ||
-    !isset($_POST['tanggal']) ||
-    !isset($_POST['kerusakan'])
+    empty($_POST['id_barang']) ||
+    empty($_POST['tanggal']) ||
+    empty($_POST['kerusakan'])
 ){
     echo "Data tidak lengkap!";
     exit;
@@ -23,48 +23,46 @@ if(
 
 /* AMANKAN INPUT */
 $id_barang = (int) $_POST['id_barang'];
-$tanggal = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
-$kerusakan = mysqli_real_escape_string($koneksi, $_POST['kerusakan']);
-$tindakan = mysqli_real_escape_string($koneksi, $_POST['tindakan']);
+$tanggal = trim($_POST['tanggal']);
+$kerusakan = trim($_POST['kerusakan']);
+$tindakan = isset($_POST['tindakan']) ? trim($_POST['tindakan']) : null;
 
 /* VALIDASI BARANG ADA */
-$cekBarang = mysqli_query($koneksi,"
-SELECT * FROM inventaris 
-WHERE id_barang='$id_barang' 
-AND deleted_at IS NULL
+$stmt = mysqli_prepare($koneksi, "
+    SELECT id_barang FROM inventaris 
+    WHERE id_barang = ? AND deleted_at IS NULL
 ");
+mysqli_stmt_bind_param($stmt, "i", $id_barang);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
-if(!$cekBarang){
-    die("Query error: " . mysqli_error($koneksi));
-}
-
-if(mysqli_num_rows($cekBarang) == 0){
+if(mysqli_num_rows($result) == 0){
     echo "Barang tidak ditemukan!";
     exit;
 }
 
 /* SIMPAN DATA PERBAIKAN */
-$query = mysqli_query($koneksi,"
-INSERT INTO perbaikan
-(id_barang, tanggal, kerusakan, tindakan)
-VALUES
-('$id_barang','$tanggal','$kerusakan','$tindakan')
+$stmtInsert = mysqli_prepare($koneksi, "
+    INSERT INTO perbaikan (id_barang, tanggal, kerusakan, tindakan) 
+    VALUES (?, ?, ?, ?)
 ");
+mysqli_stmt_bind_param($stmtInsert, "isss", $id_barang, $tanggal, $kerusakan, $tindakan);
 
-if($query){
+if(mysqli_stmt_execute($stmtInsert)){
 
     /* UPDATE STATUS INVENTARIS */
-    $update = mysqli_query($koneksi,"
-    UPDATE inventaris 
-    SET status='maintenance' 
-    WHERE id_barang='$id_barang'
+    $stmtUpdate = mysqli_prepare($koneksi, "
+        UPDATE inventaris 
+        SET status = 'rusak' 
+        WHERE id_barang = ?
     ");
-
-    if(!$update){
+    mysqli_stmt_bind_param($stmtUpdate, "i", $id_barang);
+    
+    if(!mysqli_stmt_execute($stmtUpdate)){
         die("Gagal update status inventaris: " . mysqli_error($koneksi));
     }
 
-    header("Location: data_perbaikan.php");
+    header("Location: data_perbaikan.php?pesan=berhasil");
     exit;
 
 }else{

@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+
 adminOrTeknisi();
 blockUser();
 
@@ -11,13 +12,14 @@ if(!isset($_GET['id'])){
     exit;
 }
 
-$id = (int) $_GET['id']; // FIX: amankan ID
+$id = (int) $_GET['id'];
 
 /* ambil data perbaikan */
 $data = mysqli_query($koneksi,"
 SELECT * FROM perbaikan 
-WHERE id_perbaikan='$id' 
+WHERE id_perbaikan = $id
 AND deleted_at IS NULL
+LIMIT 1
 ");
 
 /* VALIDASI QUERY */
@@ -25,19 +27,19 @@ if(!$data){
     die("Query error: " . mysqli_error($koneksi));
 }
 
-$row = mysqli_fetch_assoc($data);
-
 /* VALIDASI DATA */
-if(!$row){
+if(mysqli_num_rows($data) === 0){
     echo "Data tidak ditemukan!";
     exit;
 }
 
-/* update status inventaris (opsional) */
+$row = mysqli_fetch_assoc($data);
+
+/* update status inventaris (disesuaikan ENUM terbaru) */
 $updateInventaris = mysqli_query($koneksi,"
 UPDATE inventaris 
-SET status='aktif' 
-WHERE id_barang='".$row['id_barang']."'
+SET status='tersedia' 
+WHERE id_barang = ".$row['id_barang']."
 ");
 
 /* OPTIONAL CHECK */
@@ -49,7 +51,7 @@ if(!$updateInventaris){
 $query = mysqli_query($koneksi,"
 UPDATE perbaikan 
 SET deleted_at = NOW() 
-WHERE id_perbaikan='$id'
+WHERE id_perbaikan = $id
 ");
 
 /* VALIDASI DELETE */
@@ -63,5 +65,4 @@ if($query){
     echo "Gagal menghapus data: " . mysqli_error($koneksi);
 
 }
-
 ?>

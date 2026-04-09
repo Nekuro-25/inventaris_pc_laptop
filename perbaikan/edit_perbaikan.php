@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+
 adminOrTeknisi();
 blockUser();
 
@@ -11,14 +12,16 @@ if(!isset($_GET['id'])){
     exit;
 }
 
-$id = (int) $_GET['id']; // FIX: amankan id
+$id = (int) $_GET['id'];
 
+/* QUERY */
 $query = mysqli_query($koneksi,"
 SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang
 FROM perbaikan
 JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
-WHERE id_perbaikan='$id'
+WHERE perbaikan.id_perbaikan = $id
 AND perbaikan.deleted_at IS NULL
+AND inventaris.deleted_at IS NULL
 ");
 
 /* VALIDASI QUERY */
@@ -30,7 +33,7 @@ $data = mysqli_fetch_assoc($query);
 
 /* VALIDASI DATA */
 if(!$data){
-    echo "Data tidak ditemukan!";
+    header("Location: data_perbaikan.php?pesan=tidak_ditemukan");
     exit;
 }
 ?>
@@ -59,13 +62,11 @@ if(!$data){
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
 
-            <!-- ADMIN & TEKNISI -->
             <?php if($isAdmin || $isTeknisi){ ?>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="data_perbaikan.php">Perbaikan</a></li>
             <?php } ?>
 
-            <!-- KHUSUS ADMIN -->
             <?php if($isAdmin){ ?>
                 <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="../laporan/laporan.php">Laporan</a></li>
@@ -89,37 +90,36 @@ if(!$data){
             <form method="POST" action="pr_edit.php">
 
                 <input type="hidden" name="id_perbaikan" 
-                value="<?php echo htmlspecialchars($data['id_perbaikan']); ?>">
+                value="<?= (int)$data['id_perbaikan']; ?>">
 
                 <!-- BARANG (READONLY) -->
                 <div class="form-group">
                     <label>Barang</label>
 
                     <input type="text" 
-                        value="<?php echo htmlspecialchars($data['kode_barang'].' - '.$data['nama_barang']); ?>" 
+                        value="<?= htmlspecialchars($data['kode_barang'].' - '.$data['nama_barang']); ?>" 
                         readonly>
 
-                    <!-- tetap dikirim ke backend -->
                     <input type="hidden" name="id_barang" 
-                    value="<?php echo htmlspecialchars($data['id_barang']); ?>">
+                    value="<?= (int)$data['id_barang']; ?>">
                 </div>
 
                 <div class="form-group">
                     <label>Tanggal Perbaikan</label>
                     <input type="date" name="tanggal" 
-                    value="<?php echo htmlspecialchars($data['tanggal']); ?>" required>
+                    value="<?= htmlspecialchars($data['tanggal']); ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label>Kerusakan</label>
                     <input type="text" name="kerusakan" 
-                    value="<?php echo htmlspecialchars($data['kerusakan']); ?>" required>
+                    value="<?= htmlspecialchars($data['kerusakan']); ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label>Tindakan</label>
                     <input type="text" name="tindakan" 
-                    value="<?php echo htmlspecialchars($data['tindakan']); ?>">
+                    value="<?= htmlspecialchars($data['tindakan']); ?>">
                 </div>
 
                 <div class="form-buttons">

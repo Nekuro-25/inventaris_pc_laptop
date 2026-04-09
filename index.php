@@ -17,16 +17,39 @@
         <h2>Sistem Inventaris</h2>
         <p>PC & Laptop</p>
 
-        <form action="login/proses_login.php" method="POST">
+        <!-- PESAN ERROR -->
+        <?php if(isset($_GET['error'])){ ?>
+            <div style="color:red; margin-bottom:10px;">
+                Username atau password salah!
+            </div>
+        <?php } ?>
+
+        <form action="login/proses_login.php" method="POST" autocomplete="off">
 
             <div class="input-group">
                 <label>Username</label>
-                <input type="text" name="username" placeholder="Masukkan Username" required>
+                <input 
+                    type="text" 
+                    name="username" 
+                    placeholder="Masukkan Username" 
+                    required
+                    minlength="3"
+                >
             </div>
 
             <div class="input-group">
                 <label>Password</label>
-                <input type="password" name="password" placeholder="Masukkan Password" required>
+                <div style="display:flex; gap:10px;">
+                    <input 
+                        type="password" 
+                        id="password"
+                        name="password" 
+                        placeholder="Masukkan Password" 
+                        required
+                        minlength="6"
+                    >
+                    <button type="button" onclick="togglePassword()">Lihat</button>
+                </div>
             </div>
 
             <button type="submit" class="btn-login">Login</button>
@@ -36,6 +59,13 @@
     </div>
 
 </div>
+
+<script>
+function togglePassword() {
+    var password = document.getElementById("password");
+    password.type = (password.type === "password") ? "text" : "password";
+}
+</script>
 
 </body>
 </html>

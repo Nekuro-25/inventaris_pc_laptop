@@ -4,19 +4,33 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 onlyAdmin();
 
-$id = $_GET['id'];
+/* pastikan variabel role aman */
+$isAdmin = isset($isAdmin) ? $isAdmin : false;
+$isTeknisi = isset($isTeknisi) ? $isTeknisi : false;
 
-$query = mysqli_query($koneksi,"SELECT * FROM user WHERE id_user='$id'");
-$data = mysqli_fetch_assoc($query);
+/* ambil data user (soft delete aktif) */
+$query = mysqli_query($koneksi,"
+    SELECT * FROM pengguna 
+    WHERE deleted_at IS NULL
+    ORDER BY id_pengguna DESC
+");
 
+/* cek error query */
+if(!$query){
+    die("Query error: " . mysqli_error($koneksi));
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
 <meta charset="UTF-8">
-<title>Edit Pengguna</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manajemen User</title>
+
 <link rel="stylesheet" href="../css/dashboard.css">
+
 </head>
 
 <body>
@@ -25,19 +39,17 @@ $data = mysqli_fetch_assoc($query);
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <h2>Edit User</h2>
+        <h2>Pengguna</h2>
 
         <ul>
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
 
-            <!-- ADMIN & TEKNISI -->
             <?php if($isAdmin || $isTeknisi){ ?>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <?php } ?>
 
-            <!-- KHUSUS ADMIN -->
             <?php if($isAdmin){ ?>
                 <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="../laporan/laporan.php">Laporan</a></li>
@@ -53,53 +65,65 @@ $data = mysqli_fetch_assoc($query);
     <div class="main">
 
         <div class="topbar">
-            <h1>Edit User</h1>
+            <h1>Manajemen User</h1>
         </div>
 
-        <div class="form-container">
+        <div class="table-container">
 
-            <form method="POST" action="pr_edit.php">
+        <?php if($isAdmin){ ?>
+            <a href="tambah_user.php" class="btn-tambah">+ Tambah User</a>
+        <?php } ?>
+        
+            <table>
 
-                <input type="hidden" name="id" value="<?php echo $data['id_user']; ?>">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
 
-                <div class="form-group">
-                    <label>Nama</label>
-                    <input type="text" name="nama" value="<?php echo $data['nama']; ?>" required>
-                </div>
+                <tbody>
 
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" name="username" value="<?php echo $data['username']; ?>" required>
-                </div>
+                    <?php
+                    $no = 1;
 
-                <div class="form-group">
-                    <label>Password</label>
+                    if(mysqli_num_rows($query) > 0){
+                        while($row = mysqli_fetch_assoc($query)){
+                    ?>
 
-                    <div style="display:flex; gap:10px;">
-                        <input type="password" id="password" name="password">
-                        <button type="button" onclick="togglePassword()">Lihat</button>
-                    </div>
+                    <tr>
+                        <td><?php echo $no++; ?></td>    
+                        <td><?php echo htmlspecialchars($row['nama']); ?></td>
+                        <td><?php echo htmlspecialchars($row['username']); ?></td>
+                        <td><?php echo htmlspecialchars($row['role']); ?></td>
+                        <td>
+                            <?php if($isAdmin){ ?>
+                                <a href="edit.php?id=<?php echo urlencode($row['id_pengguna']); ?>" class="btn-edit">Edit</a>
+                                <a href="hapus_user.php?id=<?php echo urlencode($row['id_pengguna']); ?>" 
+                                   class="btn-hapus"
+                                   onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
+                                   Hapus
+                                </a>
+                            <?php } ?>
+                        </td>
+                    </tr>
+                    
+                    <?php 
+                        }
+                    } else {
+                    ?>
+                        <tr>
+                            <td colspan="5" style="text-align:center;">Data tidak ditemukan</td>
+                        </tr>
+                    <?php } ?>
+            
+                </tbody>
 
-                    <small>Kosongkan jika tidak ingin mengubah password</small>
-                </div>
-
-                <div class="form-group">
-                    <label>Role</label>
-
-                    <select name="role">
-                        <option value="admin" <?php if($data['role']=="admin") echo "selected"; ?>>Admin</option>
-                        <option value="teknisi" <?php if($data['role']=="teknisi") echo "selected"; ?>>Teknisi</option>
-                        <option value="user" <?php if($data['role']=="user") echo "selected"; ?>>User</option>
-                    </select>
-
-                </div>
-
-                <div class="form-buttons">
-                    <button type="submit" class="btn-simpan">Update</button>
-                    <a href="data_user.php" class="btn-batal">Batal</a>
-                </div>
-
-            </form>
+            </table>
 
         </div>
 
@@ -107,16 +131,7 @@ $data = mysqli_fetch_assoc($query);
 
 </div>
 
-<script>
-function togglePassword() {
-    var input = document.getElementById("password");
-    if (input.type === "password") {
-        input.type = "text";
-    } else {
-        input.type = "password";
-    }
-}
-</script>
+<script src="../js/konfirmasi.js"></script>
 
 </body>
 </html>

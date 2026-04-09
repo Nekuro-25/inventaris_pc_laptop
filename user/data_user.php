@@ -4,8 +4,16 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 onlyAdmin();
 
-/* ambil data user */
-$query = mysqli_query($koneksi,"SELECT * FROM user");
+/* ambil data user (soft delete aktif) */
+$query = mysqli_query($koneksi,"
+    SELECT * FROM pengguna 
+    WHERE deleted_at IS NULL
+");
+
+/* cek error query */
+if(!$query){
+    die("Query error: " . mysqli_error($koneksi));
+}
 ?>
 
 <!DOCTYPE html>
@@ -32,13 +40,11 @@ $query = mysqli_query($koneksi,"SELECT * FROM user");
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
 
-            <!-- ADMIN & TEKNISI -->
             <?php if($isAdmin || $isTeknisi){ ?>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <?php } ?>
 
-            <!-- KHUSUS ADMIN -->
             <?php if($isAdmin){ ?>
                 <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="../laporan/laporan.php">Laporan</a></li>
@@ -88,13 +94,17 @@ $query = mysqli_query($koneksi,"SELECT * FROM user");
                     <tr>
 
                         <td><?php echo $no++; ?></td>    
-                        <td><?php echo $row['nama']; ?></td>
-                        <td><?php echo $row['username']; ?></td>
-                        <td><?php echo $row['role']; ?></td>
+                        <td><?php echo htmlspecialchars($row['nama']); ?></td>
+                        <td><?php echo htmlspecialchars($row['username']); ?></td>
+                        <td><?php echo htmlspecialchars($row['role']); ?></td>
                         <td>
                             <?php if($isAdmin){ ?>
-                                <a href="edit.php?id=<?php echo $row['id_user']; ?>" class="btn-edit">Edit</a>
-                                <a href="hapus_user.php?id=<?php echo $row['id_user']; ?>"class="btn-hapus"onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">Hapus</a>
+                                <a href="edit.php?id=<?php echo $row['id_pengguna']; ?>" class="btn-edit">Edit</a>
+                                <a href="hapus_user.php?id=<?php echo $row['id_pengguna']; ?>" 
+                                   class="btn-hapus"
+                                   onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
+                                   Hapus
+                                </a>
                             <?php } ?>
                         </td>
 

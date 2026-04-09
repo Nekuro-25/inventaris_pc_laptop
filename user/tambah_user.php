@@ -12,31 +12,11 @@ onlyAdmin();
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tambah User</title>
+<title>Tambah Pengguna</title>
 
 <link rel="stylesheet" href="../css/dashboard.css">
 
 </head>
-
-<script>
-
-function togglePassword() {
-
-var password = document.getElementById("password");
-
-if (password.type === "password") {
-
-password.type = "text";
-
-} else {
-
-password.type = "password";
-
-}
-
-}
-
-</script>
 
 <body>
 
@@ -50,13 +30,11 @@ password.type = "password";
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
 
-            <!-- ADMIN & TEKNISI -->
             <?php if($isAdmin || $isTeknisi){ ?>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <?php } ?>
 
-            <!-- KHUSUS ADMIN -->
             <?php if($isAdmin){ ?>
                 <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="../laporan/laporan.php">Laporan</a></li>
@@ -72,12 +50,12 @@ password.type = "password";
     <div class="main">
 
         <div class="topbar">
-            <h1>Tambah User</h1>
+            <h1>Tambah Pengguna</h1>
         </div>
 
         <div class="form-container">
 
-            <form method="POST" action="pr_tambah.php">
+            <form method="POST" action="pr_tambah.php" autocomplete="off">
 
                 <div class="form-group">
                     <label>Nama</label>
@@ -92,7 +70,7 @@ password.type = "password";
                 <div class="form-group">
                     <label>Password</label>
                     <div style="display:flex; gap:10px;">
-                        <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+                        <input type="password" id="password" name="password" placeholder="Minimal 6 karakter" required minlength="6">
                         <button type="button" onclick="togglePassword()">Lihat</button>
                     </div>
                 </div>
@@ -100,10 +78,10 @@ password.type = "password";
                 <div class="form-group">
                     <label>Role</label>
                     <select name="role" required>
-                    <option value="">-- Pilih Role --</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Teknisi">Teknisi</option>
-                    <option value="User">User</option>
+                        <option value="">-- Pilih Role --</option>
+                        <option value="admin">Admin</option>
+                        <option value="teknisi">Teknisi</option>
+                        <option value="user">User</option>
                     </select>
                 </div>
 
@@ -119,6 +97,13 @@ password.type = "password";
     </div>
 
 </div>
+
+<script>
+function togglePassword() {
+    var password = document.getElementById("password");
+    password.type = (password.type === "password") ? "text" : "password";
+}
+</script>
 
 </body>
 </html>

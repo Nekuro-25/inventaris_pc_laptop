@@ -3,43 +3,39 @@
 include("../config/auth.php");
 include("../config/koneksi.php");
 
-$id = $_POST['id'];
-$nama = $_POST['nama'];
-$username = $_POST['username'];
-$password = $_POST['password'];
-$role = $_POST['role'];
-
-/* cek password diisi atau tidak */
-if(!empty($password)){
-
-    $hash = password_hash($password, PASSWORD_DEFAULT);
-
-    $query = mysqli_query($koneksi,"
-    UPDATE user SET
-    nama='$nama',
-    username='$username',
-    password='$hash',
-    role='$role'
-    WHERE id_user='$id'
-    ");
-
-}else{
-
-    $query = mysqli_query($koneksi,"
-    UPDATE user SET
-    nama='$nama',
-    username='$username',
-    role='$role'
-    WHERE id_user='$id'
-    ");
-
+/* validasi parameter */
+if(!isset($_GET['id'])){
+    header("Location: data_user.php?error=invalid");
+    exit;
 }
 
-if($query){
-    header("Location: data_user.php");
+$id = intval($_GET['id']);
+
+/* cek apakah user masih aktif */
+$cek = mysqli_query($koneksi, "
+    SELECT id_pengguna 
+    FROM pengguna 
+    WHERE id_pengguna = $id 
+    AND deleted_at IS NULL
+");
+
+if(mysqli_num_rows($cek) == 0){
+    header("Location: data_user.php?error=data_tidak_ditemukan");
     exit;
-}else{
-    echo "Gagal update: " . mysqli_error($koneksi);
+}
+
+/* soft delete */
+$query = mysqli_query($koneksi, "
+    UPDATE pengguna 
+    SET deleted_at = NOW() 
+    WHERE id_pengguna = $id
+");
+
+/* cek hasil */
+if($query){
+    header("Location: data_user.php?pesan=hapus_berhasil");
+} else {
+    header("Location: data_user.php?error=gagal_hapus");
 }
 
 ?>

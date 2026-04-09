@@ -5,19 +5,34 @@ include("../config/koneksi.php");
 adminOrTeknisi();
 blockUser();
 
-/* ambil id dari URL */
-$id = $_GET['id'];
+/* VALIDASI ID */
+if(!isset($_GET['id'])){
+    header("Location: data_perbaikan.php");
+    exit;
+}
 
-/* ambil data perbaikan + inventaris */
+$id = (int) $_GET['id']; // FIX: amankan id
+
 $query = mysqli_query($koneksi,"
 SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang
 FROM perbaikan
 JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
 WHERE id_perbaikan='$id'
+AND perbaikan.deleted_at IS NULL
 ");
+
+/* VALIDASI QUERY */
+if(!$query){
+    die("Query error: " . mysqli_error($koneksi));
+}
 
 $data = mysqli_fetch_assoc($query);
 
+/* VALIDASI DATA */
+if(!$data){
+    echo "Data tidak ditemukan!";
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -73,33 +88,38 @@ $data = mysqli_fetch_assoc($query);
 
             <form method="POST" action="pr_edit.php">
 
-                <input type="hidden" name="id_perbaikan" value="<?php echo $data['id_perbaikan']; ?>">
+                <input type="hidden" name="id_perbaikan" 
+                value="<?php echo htmlspecialchars($data['id_perbaikan']); ?>">
 
                 <!-- BARANG (READONLY) -->
                 <div class="form-group">
                     <label>Barang</label>
 
                     <input type="text" 
-                           value="<?php echo $data['kode_barang'].' - '.$data['nama_barang']; ?>" 
-                           readonly>
+                        value="<?php echo htmlspecialchars($data['kode_barang'].' - '.$data['nama_barang']); ?>" 
+                        readonly>
 
                     <!-- tetap dikirim ke backend -->
-                    <input type="hidden" name="id_barang" value="<?php echo $data['id_barang']; ?>">
+                    <input type="hidden" name="id_barang" 
+                    value="<?php echo htmlspecialchars($data['id_barang']); ?>">
                 </div>
 
                 <div class="form-group">
                     <label>Tanggal Perbaikan</label>
-                    <input type="date" name="tanggal" value="<?php echo $data['tanggal']; ?>" required>
+                    <input type="date" name="tanggal" 
+                    value="<?php echo htmlspecialchars($data['tanggal']); ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label>Kerusakan</label>
-                    <input type="text" name="kerusakan" value="<?php echo $data['kerusakan']; ?>" required>
+                    <input type="text" name="kerusakan" 
+                    value="<?php echo htmlspecialchars($data['kerusakan']); ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label>Tindakan</label>
-                    <input type="text" name="tindakan" value="<?php echo $data['tindakan']; ?>">
+                    <input type="text" name="tindakan" 
+                    value="<?php echo htmlspecialchars($data['tindakan']); ?>">
                 </div>
 
                 <div class="form-buttons">

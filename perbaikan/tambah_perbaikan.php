@@ -9,8 +9,14 @@ blockUser();
 $data_barang = mysqli_query($koneksi,"
 SELECT id_barang, kode_barang, nama_barang 
 FROM inventaris 
-WHERE status='rusak' or status='maintenance'
+WHERE (status='rusak' OR status='maintenance')
+AND deleted_at IS NULL
 ");
+
+/* VALIDASI QUERY */
+if(!$data_barang){
+    die("Query error: " . mysqli_error($koneksi));
+}
 
 ?>
 
@@ -73,13 +79,13 @@ WHERE status='rusak' or status='maintenance'
                     <select name="id_barang" required>
                         <option value="">-- Pilih Barang --</option>
                         <?php
-                            while($barang = mysqli_fetch_assoc($data_barang)){
+                        while($barang = mysqli_fetch_assoc($data_barang)){
                         ?>
-                        <option value="<?php echo $barang['id_barang']; ?>">
-                            <?php echo $barang['kode_barang']; ?> - <?php echo $barang['nama_barang']; ?>
+                        <option value="<?php echo htmlspecialchars($barang['id_barang']); ?>">
+                            <?php echo htmlspecialchars($barang['kode_barang']); ?> - 
+                            <?php echo htmlspecialchars($barang['nama_barang']); ?>
                         </option>
                         <?php } ?>
-
                     </select>
 
                 </div>

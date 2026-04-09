@@ -10,6 +10,7 @@ SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang
 FROM perbaikan
 JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
 WHERE perbaikan.deleted_at IS NULL
+AND inventaris.deleted_at IS NULL
 ");
 ?>
 
@@ -93,11 +94,11 @@ WHERE perbaikan.deleted_at IS NULL
                     <tr>
 
                         <td><?php echo $no++; ?></td>
-                        <td><?php echo $row['kode_barang']; ?></td>
-                        <td><?php echo $row['nama_barang']; ?></td>
-                        <td><?php echo $row['tanggal']; ?></td>
-                        <td><?php echo $row['kerusakan']; ?></td>
-                        <td><?php echo $row['tindakan']; ?></td>
+                        <td><?= htmlspecialchars($row['kode_barang']); ?></td>
+                        <td><?= htmlspecialchars($row['nama_barang']); ?></td>
+                        <td><?= htmlspecialchars($row['tanggal']); ?></td>
+                        <td><?= htmlspecialchars($row['kerusakan']); ?></td>
+                        <td><?= htmlspecialchars($row['tindakan']); ?></td>
                         <td>
                             <?php if($isAdmin || $isTeknisi){ ?>
                                 <a href="edit_perbaikan.php?id=<?php echo $row['id_perbaikan']; ?>" class="btn-edit">Edit</a>

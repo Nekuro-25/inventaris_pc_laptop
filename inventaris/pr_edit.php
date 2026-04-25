@@ -10,13 +10,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+/* ✅ FIX #12 CSRF: Validasi token */
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    header("Location: data.php?error=invalid_request");
+    exit;
+}
+
 /* Validasi input wajib */
 if (empty($_POST['id_barang']) || empty($_POST['kode_barang']) || empty($_POST['nama_barang'])) {
     header("Location: data.php?error=data_tidak_lengkap");
     exit;
 }
 
-/* ✅ FIX: Ambil & bersihkan input */
+/* ✅ FIX: Bersihkan input */
 $id          = (int) $_POST['id_barang'];
 $kode_barang = trim($_POST['kode_barang']);
 $nama_barang = trim($_POST['nama_barang']);
@@ -37,7 +43,7 @@ if (!in_array($jenis, $jenis_allowed) || !in_array($status, $status_allowed)) {
     exit;
 }
 
-/* ✅ FIX: Prepared Statement — mencegah SQL Injection */
+/* ✅ FIX SQL Injection: Prepared Statement */
 $stmt = mysqli_prepare($koneksi, "
     UPDATE inventaris SET
         kode_barang = ?,
@@ -53,16 +59,8 @@ $stmt = mysqli_prepare($koneksi, "
     WHERE id_barang = ?
 ");
 mysqli_stmt_bind_param($stmt, "sssssssssi",
-    $kode_barang,
-    $nama_barang,
-    $jenis,
-    $merk,
-    $processor,
-    $ram,
-    $storage,
-    $id_lokasi,
-    $status,
-    $id
+    $kode_barang, $nama_barang, $jenis, $merk,
+    $processor, $ram, $storage, $id_lokasi, $status, $id
 );
 
 if (mysqli_stmt_execute($stmt)) {

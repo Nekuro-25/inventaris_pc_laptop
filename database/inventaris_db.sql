@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 07 Apr 2026 pada 04.28
+-- Waktu pembuatan: 26 Apr 2026 pada 01.22
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.0.30
 
@@ -37,16 +37,18 @@ CREATE TABLE `inventaris` (
   `ram` varchar(50) DEFAULT NULL,
   `storage` varchar(50) DEFAULT NULL,
   `id_lokasi` int(11) DEFAULT NULL,
-  `status` enum('aktif','rusak','maintenance') DEFAULT 'aktif'
+  `status` enum('tersedia','dipinjam','rusak') NOT NULL DEFAULT 'tersedia',
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `inventaris`
 --
 
-INSERT INTO `inventaris` (`id_barang`, `kode_barang`, `nama_barang`, `jenis`, `merk`, `processor`, `ram`, `storage`, `id_lokasi`, `status`) VALUES
-(6, '001/LENOVO450', 'Lenovo 001', 'PC', 'Lenovo', 'Intel Core 2 ', '2 GB', '256 GB', 5, 'aktif'),
-(7, '002', 'Lenovo 002', 'Laptop', 'Lenovo', 'Intel Core 2 ', '2 GB', '256 GB', 5, 'aktif');
+INSERT INTO `inventaris` (`id_barang`, `kode_barang`, `nama_barang`, `jenis`, `merk`, `processor`, `ram`, `storage`, `id_lokasi`, `status`, `updated_at`, `deleted_at`) VALUES
+(6, '001/LENOVO450', 'Lenovo 001', 'PC', 'Lenovo', 'Intel Core 2', '2 GB', '256 GB', 5, 'tersedia', NULL, NULL),
+(7, '002', 'Lenovo 002', 'Laptop', 'Lenovo', 'Intel Core 2', '2 GB', '256 GB', 5, 'tersedia', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -56,15 +58,16 @@ INSERT INTO `inventaris` (`id_barang`, `kode_barang`, `nama_barang`, `jenis`, `m
 
 CREATE TABLE `lokasi` (
   `id_lokasi` int(11) NOT NULL,
-  `nama_lokasi` varchar(100) NOT NULL
+  `nama_lokasi` varchar(100) NOT NULL,
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `lokasi`
 --
 
-INSERT INTO `lokasi` (`id_lokasi`, `nama_lokasi`) VALUES
-(5, 'Lab 2');
+INSERT INTO `lokasi` (`id_lokasi`, `nama_lokasi`, `deleted_at`) VALUES
+(5, 'Lab 2', NULL);
 
 -- --------------------------------------------------------
 
@@ -92,6 +95,28 @@ INSERT INTO `peminjaman` (`id`, `id_barang`, `nama_peminjam`, `tanggal_pinjam`, 
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `pengguna`
+--
+
+CREATE TABLE `pengguna` (
+  `id_pengguna` int(11) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('admin','teknisi','user') NOT NULL DEFAULT 'user',
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `pengguna`
+--
+
+INSERT INTO `pengguna` (`id_pengguna`, `nama`, `username`, `password`, `role`, `deleted_at`) VALUES
+(1, 'Bagus Eka Febriansyah', 'admin01', '$2y$10$IhRaokOlLAfCDkKEokR5NetH0oxdWI6nn2FOfYV1/SqevjP8ymhNe', 'admin', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `perbaikan`
 --
 
@@ -100,36 +125,17 @@ CREATE TABLE `perbaikan` (
   `id_barang` int(11) DEFAULT NULL,
   `tanggal` date DEFAULT NULL,
   `kerusakan` text DEFAULT NULL,
-  `tindakan` text DEFAULT NULL
+  `tindakan` text DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `perbaikan`
 --
 
-INSERT INTO `perbaikan` (`id_perbaikan`, `id_barang`, `tanggal`, `kerusakan`, `tindakan`) VALUES
-(1, 6, '2026-03-17', 'lcd error', 'diperbaiki teknisi pp');
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `user`
---
-
-CREATE TABLE `user` (
-  `id_user` int(11) NOT NULL,
-  `nama` varchar(100) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` enum('admin','teknisi','user') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `user`
---
-
-INSERT INTO `user` (`id_user`, `nama`, `username`, `password`, `role`) VALUES
-(3, 'Bagus Eka Febriansyah', 'admin01', '$2y$10$IhRaokOlLAfCDkKEokR5NetH0oxdWI6nn2FOfYV1/SqevjP8ymhNe', 'admin');
+INSERT INTO `perbaikan` (`id_perbaikan`, `id_barang`, `tanggal`, `kerusakan`, `tindakan`, `updated_at`, `deleted_at`) VALUES
+(1, 6, '2026-03-17', 'lcd error', 'diperbaiki teknisi pp', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -156,17 +162,18 @@ ALTER TABLE `peminjaman`
   ADD KEY `id_barang` (`id_barang`);
 
 --
+-- Indeks untuk tabel `pengguna`
+--
+ALTER TABLE `pengguna`
+  ADD PRIMARY KEY (`id_pengguna`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
 -- Indeks untuk tabel `perbaikan`
 --
 ALTER TABLE `perbaikan`
   ADD PRIMARY KEY (`id_perbaikan`),
   ADD KEY `id_barang` (`id_barang`);
-
---
--- Indeks untuk tabel `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id_user`);
 
 --
 -- AUTO_INCREMENT untuk tabel yang dibuang
@@ -191,16 +198,16 @@ ALTER TABLE `peminjaman`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT untuk tabel `pengguna`
+--
+ALTER TABLE `pengguna`
+  MODIFY `id_pengguna` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT untuk tabel `perbaikan`
 --
 ALTER TABLE `perbaikan`
   MODIFY `id_perbaikan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT untuk tabel `user`
---
-ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)

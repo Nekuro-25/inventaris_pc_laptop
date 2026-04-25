@@ -3,12 +3,12 @@
 include("../config/auth.php");
 include("../config/koneksi.php");
 
-$query = mysqli_query($koneksi,"
-SELECT inventaris.*, lokasi.nama_lokasi
-FROM inventaris
-JOIN lokasi ON inventaris.id_lokasi = lokasi.id_lokasi
-WHERE inventaris.deleted_at IS NULL
-AND lokasi.deleted_at IS NULL
+$query = mysqli_query($koneksi, "
+    SELECT inventaris.*, lokasi.nama_lokasi
+    FROM inventaris
+    JOIN lokasi ON inventaris.id_lokasi = lokasi.id_lokasi
+    WHERE inventaris.deleted_at IS NULL
+    AND lokasi.deleted_at IS NULL
 ");
 ?>
 
@@ -36,13 +36,11 @@ AND lokasi.deleted_at IS NULL
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="data.php">Data Inventaris</a></li>
 
-            <!-- ADMIN & TEKNISI -->
             <?php if($isAdmin || $isTeknisi){ ?>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <?php } ?>
 
-            <!-- KHUSUS ADMIN -->
             <?php if($isAdmin){ ?>
                 <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="../laporan/laporan.php">Laporan</a></li>
@@ -63,7 +61,6 @@ AND lokasi.deleted_at IS NULL
     
         <div class="table-container">
 
-            <!-- Tombol tambah hanya admin & teknisi -->
             <?php if($isAdmin || $isTeknisi){ ?>
                 <a href="tambah.php" class="btn-tambah">+ Tambah Inventaris</a>
             <?php } ?>
@@ -87,24 +84,25 @@ AND lokasi.deleted_at IS NULL
 
                     <?php
                     $no = 1;
-
                     while($row = mysqli_fetch_assoc($query)){
                     ?>
 
                     <tr>
 
                         <td><?php echo $no++; ?></td>
-                        <td><?php echo $row['kode_barang']; ?></td>
-                        <td><?php echo $row['nama_barang']; ?></td>
-                        <td><?php echo $row['jenis']; ?></td>
-                        <td><?php echo $row['merk']; ?></td>
-                        <td><?php echo $row['nama_lokasi']; ?></td>
-                        <td><?php echo $row['status']; ?></td>
+                        <!-- ✅ FIX XSS: semua output data dari DB dibungkus htmlspecialchars() -->
+                        <td><?php echo htmlspecialchars($row['kode_barang']); ?></td>
+                        <td><?php echo htmlspecialchars($row['nama_barang']); ?></td>
+                        <td><?php echo htmlspecialchars($row['jenis']); ?></td>
+                        <td><?php echo htmlspecialchars($row['merk']); ?></td>
+                        <td><?php echo htmlspecialchars($row['nama_lokasi']); ?></td>
+                        <td><?php echo htmlspecialchars($row['status']); ?></td>
                         <td>
 
                             <?php if($isAdmin || $isTeknisi){ ?>
-                                <a href="edit.php?id=<?php echo $row['id_barang']; ?>" class="btn-edit">Edit</a>
-                                <a href="hapus.php?id=<?php echo $row['id_barang']; ?>" class="btn-hapus" onclick="return konfirmasiHapus()">Hapus</a>
+                                <!-- ✅ FIX XSS: id di URL juga diproteksi -->
+                                <a href="edit.php?id=<?php echo (int)$row['id_barang']; ?>" class="btn-edit">Edit</a>
+                                <a href="hapus.php?id=<?php echo (int)$row['id_barang']; ?>" class="btn-hapus" onclick="return konfirmasiHapus()">Hapus</a>
                             <?php } ?>
 
                         </td>
@@ -116,11 +114,11 @@ AND lokasi.deleted_at IS NULL
                 </tbody>
 
             </table>
-                                
+                            
         </div>
-                                
+                            
     </div>
-                                
+                            
 </div>
 
 <script src="../js/konfirmasi.js"></script>

@@ -6,16 +6,16 @@ include("../config/koneksi.php");
 adminOrTeknisi();
 blockUser();
 
-/* query dengan validasi */
-$query = mysqli_query($koneksi,"
-SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang
-FROM perbaikan
-JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
-WHERE perbaikan.deleted_at IS NULL
-AND inventaris.deleted_at IS NULL
+/* ✅ Query aman — kolom deleted_at sekarang sudah ada di tabel perbaikan */
+$query = mysqli_query($koneksi, "
+    SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang
+    FROM perbaikan
+    JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
+    WHERE perbaikan.deleted_at IS NULL
+    AND inventaris.deleted_at IS NULL
 ");
 
-if(!$query){
+if (!$query) {
     die("Query error: " . mysqli_error($koneksi));
 }
 ?>
@@ -91,33 +91,31 @@ if(!$query){
 
                     <?php
                     $no = 1;
-
-                    if(mysqli_num_rows($query) > 0){
+                    if (mysqli_num_rows($query) > 0) {
                         while($row = mysqli_fetch_assoc($query)){
                     ?>
 
                     <tr>
-
                         <td><?php echo $no++; ?></td>
+                        <!-- ✅ XSS: semua output pakai htmlspecialchars -->
                         <td><?= htmlspecialchars($row['kode_barang']); ?></td>
                         <td><?= htmlspecialchars($row['nama_barang']); ?></td>
                         <td><?= htmlspecialchars($row['tanggal']); ?></td>
                         <td><?= htmlspecialchars($row['kerusakan']); ?></td>
-                        <td><?= htmlspecialchars($row['tindakan']); ?></td>
+                        <td><?= htmlspecialchars($row['tindakan'] ?? '-'); ?></td>
                         <td>
                             <?php if($isAdmin || $isTeknisi){ ?>
                                 <a href="edit_perbaikan.php?id=<?= (int)$row['id_perbaikan']; ?>" class="btn-edit">Edit</a>
-                                <a href="hapus_perbaikan.php?id=<?= (int)$row['id_perbaikan']; ?>" 
+                                <a href="hapus_perbaikan.php?id=<?= (int)$row['id_perbaikan']; ?>"
                                    class="btn-hapus"
                                    onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
                                    Hapus
                                 </a>
                             <?php } ?>
                         </td>
-                    
                     </tr>
 
-                    <?php 
+                    <?php
                         }
                     } else {
                         echo "<tr><td colspan='7' style='text-align:center;'>Data tidak tersedia</td></tr>";

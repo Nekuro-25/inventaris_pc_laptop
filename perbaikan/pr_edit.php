@@ -2,80 +2,78 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
-
 adminOrTeknisi();
-blockUser();
 
-/* VALIDASI METHOD */
-if($_SERVER['REQUEST_METHOD'] !== 'POST'){
+/* Validasi method */
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: data_perbaikan.php");
     exit;
 }
 
-/* VALIDASI INPUT WAJIB */
-if(
-    empty($_POST['id_perbaikan']) ||
-    empty($_POST['id_barang']) ||
-    empty($_POST['tanggal']) ||
-    empty($_POST['kerusakan'])
-){
-    echo "Data tidak lengkap!";
+/* Validasi input wajib */
+if (empty($_POST['id_perbaikan']) || empty($_POST['id_barang']) || empty($_POST['tanggal']) || empty($_POST['kerusakan'])) {
+    header("Location: data_perbaikan.php?error=data_tidak_lengkap");
     exit;
 }
 
-/* AMANKAN DATA */
-$id = (int) $_POST['id_perbaikan'];
+/* ✅ FIX: Bersihkan input */
+$id        = (int) $_POST['id_perbaikan'];
 $id_barang = (int) $_POST['id_barang'];
-$tanggal = mysqli_real_escape_string($koneksi, $_POST['tanggal']);
-$kerusakan = mysqli_real_escape_string($koneksi, $_POST['kerusakan']);
-$tindakan = isset($_POST['tindakan']) 
-    ? mysqli_real_escape_string($koneksi, $_POST['tindakan']) 
-    : '';
+$tanggal   = trim($_POST['tanggal']);
+$kerusakan = trim($_POST['kerusakan']);
+$tindakan  = isset($_POST['tindakan']) ? trim($_POST['tindakan']) : '';
 
-/* VALIDASI DATA PERBAIKAN ADA & BELUM DIHAPUS */
-$cek = mysqli_query($koneksi,"
-SELECT id_perbaikan FROM perbaikan 
-WHERE id_perbaikan = '$id' 
-AND deleted_at IS NULL
+/* Validasi data perbaikan ada & belum dihapus */
+$stmtCek = mysqli_prepare($koneksi, "
+    SELECT id_perbaikan FROM perbaikan 
+    WHERE id_perbaikan = ? AND deleted_at IS NULL
+    LIMIT 1
 ");
+mysqli_stmt_bind_param($stmtCek, "i", $id);
+mysqli_stmt_execute($stmtCek);
+$resultCek = mysqli_stmt_get_result($stmtCek);
+mysqli_stmt_close($stmtCek);
 
-if(!$cek){
-    die("Query error: " . mysqli_error($koneksi));
-}
-
-if(mysqli_num_rows($cek) === 0){
-    echo "Data tidak ditemukan atau sudah dihapus!";
+if (mysqli_num_rows($resultCek) === 0) {
+    header("Location: data_perbaikan.php?error=data_tidak_ditemukan");
     exit;
 }
 
-/* VALIDASI BARANG ADA & BELUM DIHAPUS */
-$cekBarang = mysqli_query($koneksi,"
-SELECT id_barang FROM inventaris
-WHERE id_barang = '$id_barang'
-AND deleted_at IS NULL
+/* Validasi barang ada & belum dihapus */
+$stmtBarang = mysqli_prepare($koneksi, "
+    SELECT id_barang FROM inventaris 
+    WHERE id_barang = ? AND deleted_at IS NULL
+    LIMIT 1
 ");
+mysqli_stmt_bind_param($stmtBarang, "i", $id_barang);
+mysqli_stmt_execute($stmtBarang);
+$resultBarang = mysqli_stmt_get_result($stmtBarang);
+mysqli_stmt_close($stmtBarang);
 
-if(mysqli_num_rows($cekBarang) === 0){
-    echo "Barang tidak valid!";
+if (mysqli_num_rows($resultBarang) === 0) {
+    header("Location: data_perbaikan.php?error=barang_tidak_valid");
     exit;
 }
 
-/* UPDATE DATA */
-$query = mysqli_query($koneksi,"
-UPDATE perbaikan SET
-    id_barang = '$id_barang',
-    tanggal = '$tanggal',
-    kerusakan = '$kerusakan',
-    tindakan = '$tindakan',
-    updated_at = NOW()
-WHERE id_perbaikan = '$id'
+/* ✅ FIX: Update pakai Prepared Statement */
+$stmtUpdate = mysqli_prepare($koneksi, "
+    UPDATE perbaikan SET
+        id_barang  = ?,
+        tanggal    = ?,
+        kerusakan  = ?,
+        tindakan   = ?,
+        updated_at = NOW()
+    WHERE id_perbaikan = ?
 ");
+mysqli_stmt_bind_param($stmtUpdate, "isssi", $id_barang, $tanggal, $kerusakan, $tindakan, $id);
 
-if($query){
+if (mysqli_stmt_execute($stmtUpdate)) {
+    mysqli_stmt_close($stmtUpdate);
     header("Location: data_perbaikan.php?pesan=update_berhasil");
     exit;
-}else{
-    echo "Update gagal : " . mysqli_error($koneksi);
+} else {
+    mysqli_stmt_close($stmtUpdate);
+    header("Location: data_perbaikan.php?error=gagal_update");
+    exit;
 }
-
 ?>

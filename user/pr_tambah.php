@@ -2,45 +2,66 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+onlyAdmin();
 
-/* validasi request */
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
+/* Validasi method */
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: data_user.php");
+    exit;
+}
 
-    $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-    $username = mysqli_real_escape_string($koneksi, $_POST['username']);
-    $password = $_POST['password'];
-    $role = mysqli_real_escape_string($koneksi, $_POST['role']);
+/* ✅ FIX: Bersihkan input */
+$nama     = trim($_POST['nama'] ?? '');
+$username = trim($_POST['username'] ?? '');
+$password = $_POST['password'] ?? '';
+$role     = $_POST['role'] ?? '';
 
-    /* validasi sederhana */
-    if(empty($nama) || empty($username) || empty($password) || empty($role)){
-        echo "Semua field wajib diisi!";
-        exit;
-    }
+/* Validasi tidak kosong */
+if (empty($nama) || empty($username) || empty($password) || empty($role)) {
+    header("Location: tambah_user.php?error=field_kosong");
+    exit;
+}
 
-    /* enkripsi password */
-    $hash = password_hash($password, PASSWORD_DEFAULT);
+/* Whitelist role */
+$role_allowed = ['admin', 'teknisi', 'user'];
+if (!in_array($role, $role_allowed)) {
+    header("Location: tambah_user.php?error=role_tidak_valid");
+    exit;
+}
 
-    /* cek username sudah ada atau belum */
-    $cek = mysqli_query($koneksi, "SELECT * FROM pengguna WHERE username='$username'");
-    if(mysqli_num_rows($cek) > 0){
-        echo "Username sudah digunakan!";
-        exit;
-    }
+/* Enkripsi password */
+$hash = password_hash($password, PASSWORD_DEFAULT);
 
-    /* simpan ke database (pakai tabel yang benar: pengguna) */
-    $query = mysqli_query($koneksi,"
-        INSERT INTO pengguna (nama, username, password, role)
-        VALUES ('$nama','$username','$hash','$role')
-    ");
+/* ✅ FIX: Cek username unik pakai Prepared Statement */
+$stmtCek = mysqli_prepare($koneksi, "
+    SELECT id_pengguna FROM pengguna 
+    WHERE username = ? AND deleted_at IS NULL
+    LIMIT 1
+");
+mysqli_stmt_bind_param($stmtCek, "s", $username);
+mysqli_stmt_execute($stmtCek);
+$resultCek = mysqli_stmt_get_result($stmtCek);
+mysqli_stmt_close($stmtCek);
 
-    if($query){
-        header("Location: data_user.php?pesan=berhasil");
-        exit;
-    } else {
-        echo "Data gagal disimpan : " . mysqli_error($koneksi);
-    }
+if (mysqli_num_rows($resultCek) > 0) {
+    header("Location: tambah_user.php?error=username_digunakan");
+    exit;
+}
 
+/* ✅ FIX: Insert pakai Prepared Statement */
+$stmtInsert = mysqli_prepare($koneksi, "
+    INSERT INTO pengguna (nama, username, password, role)
+    VALUES (?, ?, ?, ?)
+");
+mysqli_stmt_bind_param($stmtInsert, "ssss", $nama, $username, $hash, $role);
+
+if (mysqli_stmt_execute($stmtInsert)) {
+    mysqli_stmt_close($stmtInsert);
+    header("Location: data_user.php?pesan=berhasil");
+    exit;
 } else {
-    echo "Akses tidak valid!";
+    mysqli_stmt_close($stmtInsert);
+    header("Location: tambah_user.php?error=gagal_simpan");
+    exit;
 }
 ?>

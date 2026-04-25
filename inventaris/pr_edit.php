@@ -4,41 +4,74 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 blockUser();
 
-$id = $_POST['id_barang'];
-
-$kode_barang = $_POST['kode_barang'];
-$nama_barang = $_POST['nama_barang'];
-$jenis = $_POST['jenis'];
-$merk = $_POST['merk'];
-$processor = $_POST['processor'];
-$ram = $_POST['ram'];
-$storage = $_POST['storage'];
-$id_lokasi = $_POST['id_lokasi'];
-$status = $_POST['status'];
-
-$query = mysqli_query($koneksi,"
-UPDATE inventaris SET
-kode_barang='$kode_barang',
-nama_barang='$nama_barang',
-jenis='$jenis',
-merk='$merk',
-processor='$processor',
-ram='$ram',
-storage='$storage',
-id_lokasi='$id_lokasi',
-status='$status',
-updated_at=NOW()
-WHERE id_barang='$id'
-");
-
-if($query){
-
-header("Location: data.php");
-
-}else{
-
-echo "Update gagal : ".mysqli_error($koneksi);
-
+/* Validasi method */
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: data.php");
+    exit;
 }
 
+/* Validasi input wajib */
+if (empty($_POST['id_barang']) || empty($_POST['kode_barang']) || empty($_POST['nama_barang'])) {
+    header("Location: data.php?error=data_tidak_lengkap");
+    exit;
+}
+
+/* ✅ FIX: Ambil & bersihkan input */
+$id          = (int) $_POST['id_barang'];
+$kode_barang = trim($_POST['kode_barang']);
+$nama_barang = trim($_POST['nama_barang']);
+$jenis       = $_POST['jenis'];
+$merk        = trim($_POST['merk']);
+$processor   = trim($_POST['processor']);
+$ram         = trim($_POST['ram']);
+$storage     = trim($_POST['storage']);
+$id_lokasi   = (int) $_POST['id_lokasi'];
+$status      = $_POST['status'];
+
+/* Whitelist nilai enum */
+$jenis_allowed  = ['PC', 'Laptop'];
+$status_allowed = ['tersedia', 'dipinjam', 'rusak'];
+
+if (!in_array($jenis, $jenis_allowed) || !in_array($status, $status_allowed)) {
+    header("Location: data.php?error=data_tidak_valid");
+    exit;
+}
+
+/* ✅ FIX: Prepared Statement — mencegah SQL Injection */
+$stmt = mysqli_prepare($koneksi, "
+    UPDATE inventaris SET
+        kode_barang = ?,
+        nama_barang = ?,
+        jenis       = ?,
+        merk        = ?,
+        processor   = ?,
+        ram         = ?,
+        storage     = ?,
+        id_lokasi   = ?,
+        status      = ?,
+        updated_at  = NOW()
+    WHERE id_barang = ?
+");
+mysqli_stmt_bind_param($stmt, "sssssssssi",
+    $kode_barang,
+    $nama_barang,
+    $jenis,
+    $merk,
+    $processor,
+    $ram,
+    $storage,
+    $id_lokasi,
+    $status,
+    $id
+);
+
+if (mysqli_stmt_execute($stmt)) {
+    mysqli_stmt_close($stmt);
+    header("Location: data.php?pesan=update_berhasil");
+    exit;
+} else {
+    mysqli_stmt_close($stmt);
+    header("Location: data.php?error=gagal_update");
+    exit;
+}
 ?>

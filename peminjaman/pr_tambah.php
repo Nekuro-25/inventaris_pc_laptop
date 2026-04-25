@@ -3,55 +3,70 @@
 include("../config/auth.php");
 include("../config/koneksi.php");
 adminOrTeknisi();
-blockUser();
 
-/* VALIDASI */
-if(
-    !isset($_POST['id_barang']) ||
-    !isset($_POST['nama_peminjam']) ||
-    !isset($_POST['tanggal_pinjam'])
-){
+/* Validasi method & input */
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: index.php");
     exit;
 }
 
-$id_barang       = $_POST['id_barang'];
-$nama_peminjam   = $_POST['nama_peminjam'];
-$tanggal_pinjam  = $_POST['tanggal_pinjam'];
-
-/* cek barang */
-$cek = mysqli_query($koneksi,"
-SELECT * FROM inventaris 
-WHERE id_barang='$id_barang' 
-AND status='dipinjam'
-AND deleted_at IS NULL
-");
-
-if(mysqli_num_rows($cek) > 0){
-    echo "Barang sedang dipinjam!";
+if (empty($_POST['id_barang']) || empty($_POST['nama_peminjam']) || empty($_POST['tanggal_pinjam'])) {
+    header("Location: index.php?error=data_tidak_lengkap");
     exit;
 }
 
-/* simpan */
-$query = mysqli_query($koneksi,"
-INSERT INTO peminjaman
-(id_barang, nama_peminjam, tanggal_pinjam, status)
-VALUES
-('$id_barang','$nama_peminjam','$tanggal_pinjam','dipinjam')
+/* ✅ FIX: Bersihkan input */
+$id_barang      = (int) $_POST['id_barang'];
+$nama_peminjam  = trim($_POST['nama_peminjam']);
+$tanggal_pinjam = trim($_POST['tanggal_pinjam']);
+
+/* ✅ FIX: Cek status barang pakai Prepared Statement */
+$stmtCek = mysqli_prepare($koneksi, "
+    SELECT status FROM inventaris 
+    WHERE id_barang = ? 
+    AND deleted_at IS NULL
+    LIMIT 1
 ");
+mysqli_stmt_bind_param($stmtCek, "i", $id_barang);
+mysqli_stmt_execute($stmtCek);
+$resultCek = mysqli_stmt_get_result($stmtCek);
+$barang = mysqli_fetch_assoc($resultCek);
+mysqli_stmt_close($stmtCek);
 
-if($query){
+if (!$barang) {
+    header("Location: index.php?error=barang_tidak_ditemukan");
+    exit;
+}
 
-    mysqli_query($koneksi,"
-    UPDATE inventaris 
-    SET status='dipinjam' 
-    WHERE id_barang='$id_barang'
+if ($barang['status'] === 'dipinjam') {
+    header("Location: index.php?error=barang_sedang_dipinjam");
+    exit;
+}
+
+/* ✅ FIX: Insert peminjaman pakai Prepared Statement */
+$stmtInsert = mysqli_prepare($koneksi, "
+    INSERT INTO peminjaman (id_barang, nama_peminjam, tanggal_pinjam, status)
+    VALUES (?, ?, ?, 'dipinjam')
+");
+mysqli_stmt_bind_param($stmtInsert, "iss", $id_barang, $nama_peminjam, $tanggal_pinjam);
+
+if (mysqli_stmt_execute($stmtInsert)) {
+    mysqli_stmt_close($stmtInsert);
+
+    /* Update status inventaris */
+    $stmtUpdate = mysqli_prepare($koneksi, "
+        UPDATE inventaris SET status = 'dipinjam' WHERE id_barang = ?
     ");
+    mysqli_stmt_bind_param($stmtUpdate, "i", $id_barang);
+    mysqli_stmt_execute($stmtUpdate);
+    mysqli_stmt_close($stmtUpdate);
 
-    header("Location: index.php");
+    header("Location: index.php?pesan=berhasil");
     exit;
 
-}else{
-    echo "Data gagal disimpan : " . mysqli_error($koneksi);
+} else {
+    mysqli_stmt_close($stmtInsert);
+    header("Location: index.php?error=gagal_simpan");
+    exit;
 }
 ?>

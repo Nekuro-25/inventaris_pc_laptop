@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 26 Apr 2026 pada 01.22
+-- Waktu pembuatan: 26 Apr 2026 pada 12.15
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.0.30
 
@@ -42,14 +42,6 @@ CREATE TABLE `inventaris` (
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data untuk tabel `inventaris`
---
-
-INSERT INTO `inventaris` (`id_barang`, `kode_barang`, `nama_barang`, `jenis`, `merk`, `processor`, `ram`, `storage`, `id_lokasi`, `status`, `updated_at`, `deleted_at`) VALUES
-(6, '001/LENOVO450', 'Lenovo 001', 'PC', 'Lenovo', 'Intel Core 2', '2 GB', '256 GB', 5, 'tersedia', NULL, NULL),
-(7, '002', 'Lenovo 002', 'Laptop', 'Lenovo', 'Intel Core 2', '2 GB', '256 GB', 5, 'tersedia', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -61,13 +53,6 @@ CREATE TABLE `lokasi` (
   `nama_lokasi` varchar(100) NOT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `lokasi`
---
-
-INSERT INTO `lokasi` (`id_lokasi`, `nama_lokasi`, `deleted_at`) VALUES
-(5, 'Lab 2', NULL);
 
 -- --------------------------------------------------------
 
@@ -84,13 +69,6 @@ CREATE TABLE `peminjaman` (
   `status` enum('dipinjam','kembali') DEFAULT 'dipinjam',
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `peminjaman`
---
-
-INSERT INTO `peminjaman` (`id`, `id_barang`, `nama_peminjam`, `tanggal_pinjam`, `tanggal_kembali`, `status`, `deleted_at`) VALUES
-(2, 7, 'Bagus', '2026-04-06', '2026-04-07', 'kembali', '2026-04-07 09:07:51');
 
 -- --------------------------------------------------------
 
@@ -112,7 +90,7 @@ CREATE TABLE `pengguna` (
 --
 
 INSERT INTO `pengguna` (`id_pengguna`, `nama`, `username`, `password`, `role`, `deleted_at`) VALUES
-(1, 'Bagus Eka Febriansyah', 'admin01', '$2y$10$IhRaokOlLAfCDkKEokR5NetH0oxdWI6nn2FOfYV1/SqevjP8ymhNe', 'admin', NULL);
+(1, 'admin', 'admin01', '$2y$10$IhRaokOlLAfCDkKEokR5NetH0oxdWI6nn2FOfYV1/SqevjP8ymhNe', 'admin', NULL);
 
 -- --------------------------------------------------------
 
@@ -129,13 +107,6 @@ CREATE TABLE `perbaikan` (
   `updated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `perbaikan`
---
-
-INSERT INTO `perbaikan` (`id_perbaikan`, `id_barang`, `tanggal`, `kerusakan`, `tindakan`, `updated_at`, `deleted_at`) VALUES
-(1, 6, '2026-03-17', 'lcd error', 'diperbaiki teknisi pp', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -183,7 +154,7 @@ ALTER TABLE `perbaikan`
 -- AUTO_INCREMENT untuk tabel `inventaris`
 --
 ALTER TABLE `inventaris`
-  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT untuk tabel `lokasi`

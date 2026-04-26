@@ -559,3 +559,88 @@ button[type="submit"] {
     th, td { padding: 10px; font-size: 12.5px; }
     .table-container > a { margin: 14px 14px 10px; }
 }
+/* ===== TABLE HEADER (title + tombol tambah) ===== */
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid #edf2f7;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.table-header-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* ===== TABLE WRAPPER (scroll horizontal) ===== */
+.table-wrapper {
+    overflow-x: auto;
+    padding: 0;
+}
+
+.table-wrapper table {
+    min-width: 600px;
+}
+
+/* ===== FILTER FORM (Laporan) ===== */
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+    padding: 16px 20px 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 150px;
+}
+
+.filter-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 9px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #2d3748;
+    background: #f7fafc;
+    font-family: inherit;
+}
+
+/* ===== BTN FILTER (Tampilkan) ===== */
+.btn-filter {
+    background: #edf2f7;
+    color: #4a5568;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    align-self: flex-end;
+}
+
+.btn-filter:hover {
+    background: #e2e8f0 !important;
+    filter: none !important;
+    transform: none !important;
+}
+
+/* ===== TABLE-CONTAINER: pastikan table tanpa .table-wrapper juga punya padding ===== */
+.table-container > table {
+    padding: 0 4px;
+}
+
+/* ===== TOPBAR spacing ===== */
+.topbar {
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+}

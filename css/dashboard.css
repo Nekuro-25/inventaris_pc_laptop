@@ -1,3 +1,17 @@
+/* ============================================================
+   dashboard.css — VERSI FIXED
+   Bug yang diperbaiki:
+   1. overflow:hidden di .table-container memotong box-shadow & rounded corners
+   2. Tidak ada border/separator visual antara thead dan tbody
+   3. .btn-tambah margin hilang karena selector terlalu spesifik
+   4. Tidak ada table-header-action wrapper — btn & judul tidak rapi sejajar
+   5. tbody tr hover tidak kontras cukup dari background
+   6. td border-bottom terakhir tidak konsisten karena tr:last-child bisa salah
+   7. Style belum ada untuk pesan sukses/error dari redirect URL
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -5,7 +19,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
     background: #f0f4f8;
     color: #2d3748;
 }
@@ -13,6 +27,7 @@ body {
 /* ===== LAYOUT ===== */
 .container {
     display: flex;
+    min-height: 100vh;
 }
 
 /* ===== SIDEBAR ===== */
@@ -27,67 +42,65 @@ body {
     left: 0;
     display: flex;
     flex-direction: column;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 2px 0 8px rgba(0,0,0,0.04);
     z-index: 100;
+    overflow-y: auto;
 }
 
-.sidebar-header {
-    padding: 24px 20px 20px;
-    border-bottom: 1px solid #f0f4f8;
+.sidebar h2 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #a0aec0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 22px 20px 8px;
+    margin: 0;
 }
 
-.sidebar-logo {
+.sidebar-brand {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid #f0f4f8;
+    text-decoration: none;
 }
 
-.sidebar-logo-icon {
-    width: 38px;
-    height: 38px;
+.sidebar-brand-icon {
+    width: 36px;
+    height: 36px;
     background: linear-gradient(135deg, #4299e1, #48bb78);
-    border-radius: 10px;
+    border-radius: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 17px;
     flex-shrink: 0;
+    color: white;
 }
 
-.sidebar-logo-text h2 {
+.sidebar-brand-text {
     font-size: 14px;
     font-weight: 700;
     color: #2d3748;
     line-height: 1.2;
 }
 
-.sidebar-logo-text span {
+.sidebar-brand-text small {
+    display: block;
     font-size: 11px;
+    font-weight: 400;
     color: #a0aec0;
-}
-
-.sidebar-nav {
-    padding: 16px 12px;
-    flex: 1;
-    overflow-y: auto;
-}
-
-.nav-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: #a0aec0;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0 8px;
-    margin: 16px 0 6px;
-}
-
-.nav-label:first-child {
-    margin-top: 0;
 }
 
 .sidebar ul {
     list-style: none;
+    padding: 10px 12px;
+    flex: 1;
+}
+
+.sidebar ul li {
+    margin: 2px 0;
 }
 
 .sidebar ul li a {
@@ -96,8 +109,8 @@ body {
     padding: 9px 12px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    border-radius: 10px;
+    gap: 9px;
+    border-radius: 9px;
     font-size: 13.5px;
     font-weight: 500;
     transition: background 0.15s, color 0.15s;
@@ -109,40 +122,26 @@ body {
 }
 
 .sidebar ul li a.active {
-    background: linear-gradient(135deg, #ebf4ff, #e6fffa);
+    background: #ebf4ff;
     color: #3182ce;
 }
 
-.sidebar ul li a .nav-icon {
-    font-size: 15px;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-.sidebar-footer {
-    padding: 16px 12px;
+.sidebar ul li:last-child {
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px solid #f0f4f8;
 }
 
-.sidebar-footer a {
+.sidebar ul li:last-child a {
     color: #e53e3e;
-    text-decoration: none;
-    padding: 9px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-radius: 10px;
-    font-size: 13.5px;
-    font-weight: 500;
-    transition: background 0.15s;
 }
 
-.sidebar-footer a:hover {
+.sidebar ul li:last-child a:hover {
     background: #fff5f5;
+    color: #c53030;
 }
 
-/* ===== MAIN ===== */
+/* ===== MAIN CONTENT ===== */
 .main {
     margin-left: 230px;
     padding: 28px;
@@ -152,64 +151,74 @@ body {
 
 /* ===== TOPBAR ===== */
 .topbar {
-    margin-bottom: 28px;
+    margin-bottom: 26px;
 }
 
 .topbar h1 {
     font-size: 22px;
     font-weight: 700;
     color: #2d3748;
+    margin: 0;
 }
 
 .topbar p {
     font-size: 14px;
     color: #718096;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
-/* ===== STAT CARDS ===== */
+/* ===== CARDS DASHBOARD ===== */
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     gap: 18px;
     margin-bottom: 28px;
 }
 
 .card {
-    padding: 22px 20px;
-    border-radius: 16px;
+    padding: 20px 18px;
+    border-radius: 14px;
     background: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     border: 1px solid #f0f4f8;
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
+    text-decoration: none;
 }
 
 .card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.09);
 }
 
 .card-icon {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 20px;
     flex-shrink: 0;
 }
 
+.card-info {
+    flex: 1;
+    min-width: 0;
+}
+
 .card-info h3 {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
     color: #a0aec0;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 4px;
+    margin: 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card-info p {
@@ -217,210 +226,42 @@ body {
     font-weight: 700;
     color: #2d3748;
     line-height: 1;
+    margin: 0;
 }
 
-/* Warna ikon card */
-.card-primary .card-icon   { background: #ebf4ff; }
-.card-success .card-icon   { background: #e6fffa; }
-.card-danger  .card-icon   { background: #fff5f5; }
-.card-warning .card-icon   { background: #fffbeb; }
-.card-purple  .card-icon   { background: #faf5ff; }
+.card-primary .card-icon { background: #ebf4ff; }
+.card-success .card-icon { background: #e6fffa; }
+.card-danger  .card-icon { background: #fff5f5; }
+.card-warning .card-icon { background: #fffbeb; }
+.card-purple  .card-icon { background: #faf5ff; }
 
-/* ===== TABLE ===== */
-.table-wrapper {
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f0f4f8;
-    overflow: hidden;
-    margin-bottom: 24px;
-}
-
-.table-header {
-    padding: 18px 22px;
-    border-bottom: 1px solid #f0f4f8;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.table-header h2 {
-    font-size: 16px;
-    font-weight: 700;
-    color: #2d3748;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th {
-    background: #f7fafc;
-    padding: 12px 16px;
-    text-align: left;
+.card h3 {
     font-size: 12px;
-    font-weight: 700;
-    color: #a0aec0;
+    font-weight: 600;
+    color: #718096;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid #f0f4f8;
+    margin: 0 0 6px;
 }
 
-td {
-    padding: 13px 16px;
-    font-size: 14px;
-    color: #4a5568;
-    border-bottom: 1px solid #f7fafc;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-tbody tr:hover td {
-    background: #f7fafc;
-}
-
-/* ===== BADGE STATUS ===== */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-tersedia { background: #e6fffa; color: #276749; }
-.badge-dipinjam { background: #ebf4ff; color: #2b6cb0; }
-.badge-rusak    { background: #fff5f5; color: #c53030; }
-.badge-kembali  { background: #f0fff4; color: #276749; }
-
-/* ===== TOMBOL ===== */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 9px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-}
-
-.btn:hover { transform: translateY(-1px); opacity: 0.92; }
-.btn:active { transform: translateY(0); }
-
-.btn-primary {
-    background: linear-gradient(135deg, #4299e1, #3182ce);
-    color: #fff;
-    box-shadow: 0 3px 10px rgba(66, 153, 225, 0.3);
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #48bb78, #38a169);
-    color: #fff;
-    box-shadow: 0 3px 10px rgba(72, 187, 120, 0.3);
-}
-
-.btn-warning {
-    background: linear-gradient(135deg, #ed8936, #dd6b20);
-    color: #fff;
-    box-shadow: 0 3px 10px rgba(237, 137, 54, 0.3);
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #fc8181, #e53e3e);
-    color: #fff;
-    box-shadow: 0 3px 10px rgba(229, 62, 62, 0.25);
-}
-
-.btn-outline {
-    background: transparent;
-    border: 1.5px solid #e2e8f0;
-    color: #4a5568;
-}
-
-.btn-outline:hover { background: #f7fafc; }
-
-.btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 7px; }
-
-/* ===== FORM ===== */
-.form-card {
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f0f4f8;
-    padding: 28px;
-    max-width: 600px;
-}
-
-.form-card h2 {
-    font-size: 18px;
+.card p {
+    font-size: 26px;
     font-weight: 700;
     color: #2d3748;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #f0f4f8;
+    margin: 0;
 }
 
-.form-group {
-    margin-bottom: 18px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #4a5568;
-    margin-bottom: 7px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    font-size: 14px;
-    color: #2d3748;
-    background: #f7fafc;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    font-family: inherit;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #4299e1;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12);
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-/* ===== ALERT PESAN ===== */
+/* ===== ALERT PESAN (URL param) ===== */
+/* Ditampilkan via PHP di atas table-container */
 .alert {
     padding: 12px 16px;
     border-radius: 10px;
     font-size: 14px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     display: flex;
     align-items: center;
     gap: 10px;
+    font-weight: 500;
 }
 
 .alert-success {
@@ -441,32 +282,459 @@ tbody tr:hover td {
     color: #2b6cb0;
 }
 
+/* ===== TABLE CONTAINER ===== */
+
+/*
+ * BUG #1 FIXED: overflow:hidden dihapus dari container utama.
+ * Sebelumnya: overflow:hidden memotong box-shadow dan
+ * border-radius tidak terlihat di beberapa browser.
+ * Solusi: overflow dialihkan ke wrapper table saja.
+ */
+.table-container {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+    /* TIDAK ada overflow:hidden di sini */
+}
+
+/*
+ * BUG #3 FIXED: Header area (judul + tombol tambah)
+ * Sebelumnya btn-tambah tidak punya area yang proper,
+ * menempel langsung ke atas tabel.
+ * Solusi: pisahkan header bar dari area tabel.
+ */
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid #e2e8f0;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.table-header-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+/* Jika tidak pakai .table-header, btn-tambah langsung di .table-container */
+/* BUG #3 FIXED: Selector diperluas agar semua btn langsung bisa ditangkap */
+.table-container > a.btn-tambah,
+.table-container > a[class*="btn-"],
+.table-container > button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 18px 22px 0;
+    /* margin-bottom dihandle oleh gap ke table-wrapper */
+}
+
+/* Wrapper scroll horizontal untuk tabel di layar kecil */
+/* BUG #1 FIXED: overflow hanya di sini, bukan di container */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 0 0 16px 16px;
+}
+
+/* Jika tidak pakai .table-wrapper, padding langsung di .table-container */
+.table-container > table {
+    margin-top: 12px;
+}
+
+/* Padding bawah container agar tidak mepet */
+.table-container::after {
+    content: '';
+    display: block;
+    padding-bottom: 4px;
+}
+
+/* ===== TABLE ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/*
+ * BUG #2 FIXED: thead tidak punya visual separator yang kuat.
+ * Sebelumnya hanya border-bottom tipis di th.
+ * Solusi: background lebih gelap + border bawah yang terlihat jelas.
+ */
+thead tr {
+    background: #f7fafc;
+}
+
+thead tr th:first-child {
+    border-radius: 0; /* tidak perlu radius karena wrapper yang handle */
+}
+
+th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    /* BUG #2 FIXED: border-bottom yang lebih tebal & terlihat */
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+    background: #f7fafc;
+}
+
+td {
+    padding: 13px 14px;
+    font-size: 13.5px;
+    color: #4a5568;
+    /* BUG #4 FIXED: gunakan warna yang konsisten, bukan #f7fafc */
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+}
+
+/*
+ * BUG #6 FIXED: tr:last-child td border-bottom sebelumnya
+ * kadang tidak jalan jika ada fragment PHP di dalam tbody.
+ * Solusi: pakai selector yang lebih robust.
+ */
+tbody tr:last-of-type td {
+    border-bottom: none;
+}
+
+/*
+ * BUG #5 FIXED: hover kontras ditingkatkan.
+ * Sebelumnya #f7fafc terlalu mirip background tabel.
+ */
+tbody tr {
+    transition: background 0.12s;
+}
+
+tbody tr:hover td {
+    background: #edf2f7;
+    color: #2d3748;
+}
+
+/* Kolom aksi — tombol tidak wrap */
+td:last-child {
+    white-space: nowrap;
+}
+
+/* Teks "data tidak tersedia" */
+td[colspan] {
+    text-align: center;
+    color: #a0aec0;
+    padding: 40px 32px;
+    font-size: 14px;
+}
+
+/* ===== BADGE STATUS ===== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.badge-tersedia { background: #e6fffa; color: #276749; }
+.badge-dipinjam { background: #ebf4ff; color: #2b6cb0; }
+.badge-rusak    { background: #fff5f5; color: #c53030; }
+.badge-kembali  { background: #f0fff4; color: #276749; }
+.badge-admin    { background: #faf5ff; color: #6b46c1; }
+.badge-teknisi  { background: #fffbeb; color: #b7791f; }
+.badge-user     { background: #f7fafc; color: #4a5568; border: 1px solid #e2e8f0; }
+
+/* ===== TOMBOL ===== */
+.btn-tambah,
+.btn-simpan,
+.btn-batal,
+.btn-edit,
+.btn-hapus,
+.btn-filter,
+.btn-cetak,
+button[type="submit"],
+button[type="button"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    line-height: 1;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.btn-tambah,
+.btn-simpan,
+button[type="submit"] {
+    background: linear-gradient(135deg, #4299e1, #3182ce);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(66,153,225,0.3);
+}
+
+.btn-batal {
+    background: #f7fafc;
+    color: #4a5568;
+    border: 1.5px solid #e2e8f0;
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #ed8936, #dd6b20);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(237,137,54,0.3);
+}
+
+.btn-hapus {
+    background: linear-gradient(135deg, #fc8181, #e53e3e);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(229,62,62,0.25);
+}
+
+.btn-filter {
+    background: #f7fafc;
+    color: #4a5568;
+    border: 1.5px solid #e2e8f0;
+}
+
+.btn-cetak {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(72,187,120,0.3);
+}
+
+.btn-tambah:hover,
+.btn-simpan:hover,
+.btn-edit:hover,
+.btn-hapus:hover,
+.btn-cetak:hover,
+button[type="submit"]:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+.btn-tambah:active,
+.btn-simpan:active,
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+.btn-sm {
+    padding: 5px 11px;
+    font-size: 12px;
+    border-radius: 7px;
+}
+
+/* Gap antara btn-edit dan btn-hapus di dalam td */
+td .btn-edit,
+td .btn-hapus,
+td .btn-sm {
+    margin-right: 4px;
+    margin-bottom: 2px;
+}
+
+/* ===== FORM ===== */
+.form-container {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border: 1px solid #e2e8f0;
+    padding: 28px;
+    max-width: 620px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9px;
+    font-size: 14px;
+    color: #2d3748;
+    background: #f7fafc;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    font-family: inherit;
+    appearance: auto;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(66,153,225,0.12);
+}
+
+.form-group input[readonly] {
+    background: #f0f4f8;
+    color: #718096;
+    cursor: default;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #a0aec0;
+}
+
+.password-field {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.password-field input {
+    flex: 1;
+}
+
+.password-field button {
+    padding: 10px 14px;
+    background: #f7fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9px;
+    color: #718096;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.password-field button:hover {
+    background: #e2e8f0;
+    color: #2d3748;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f4f8;
+}
+
+/* ===== LAPORAN — filter area ===== */
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 160px;
+}
+
+.filter-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 9px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9px;
+    font-size: 13px;
+    color: #2d3748;
+    background: #f7fafc;
+    font-family: inherit;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #4299e1;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(66,153,225,0.12);
+}
+
+.table-container h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 14px;
+}
+
 /* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .sidebar {
         width: 200px;
     }
     .main {
         margin-left: 200px;
-        padding: 18px;
-    }
-    .form-row {
-        grid-template-columns: 1fr;
+        padding: 20px;
     }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 640px) {
     .sidebar {
         transform: translateX(-100%);
         transition: transform 0.25s ease;
+        width: 230px;
     }
     .sidebar.open {
         transform: translateX(0);
     }
     .main {
         margin-left: 0;
+        padding: 16px;
     }
     .cards {
         grid-template-columns: 1fr 1fr;
+    }
+    .form-container {
+        padding: 20px;
+    }
+    .filter-form {
+        flex-direction: column;
+    }
+    .filter-group {
+        min-width: 100%;
+    }
+    .form-buttons {
+        flex-direction: column;
+    }
+    .btn-tambah,
+    .btn-simpan,
+    .btn-batal {
+        width: 100%;
+        justify-content: center;
+    }
+    .table-container > a.btn-tambah {
+        margin: 14px 16px 0;
+    }
+    th, td {
+        padding: 10px 10px;
+        font-size: 12.5px;
     }
 }

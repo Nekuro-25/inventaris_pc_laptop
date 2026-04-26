@@ -63,13 +63,23 @@ if(!$query){
             <h1>Manajemen User</h1>
         </div>
 
+        <?php if(isset($_GET['pesan'])): ?>
+        <div class="alert alert-success">✅ <?= $_GET['pesan']==='berhasil' ? 'User berhasil ditambahkan.' : ($_GET['pesan']==='hapus_berhasil' ? 'User berhasil dihapus.' : ($_GET['pesan']==='update_berhasil' ? 'User berhasil diupdate.' : htmlspecialchars($_GET['pesan']))) ?></div>
+        <?php elseif(isset($_GET['error'])): ?>
+        <div class="alert alert-danger">⚠️ Terjadi kesalahan. Silakan coba lagi.</div>
+        <?php endif; ?>
+
         <div class="table-container">
 
-        <?php if($isAdmin){ ?>
-            <a href="tambah_user.php" class="btn-tambah">+ Tambah User</a>
-        <?php } ?>
-        
-            <table>
+        <div class="table-header">
+            <span class="table-header-title">Daftar Pengguna</span>
+            <?php if($isAdmin){ ?>
+                <a href="tambah_user.php" class="btn-tambah">+ Tambah User</a>
+            <?php } ?>
+        </div>
+
+        <div class="table-wrapper">
+        <table>
 
                 <thead>
 
@@ -96,7 +106,13 @@ if(!$query){
                         <td><?php echo $no++; ?></td>    
                         <td><?php echo htmlspecialchars($row['nama']); ?></td>
                         <td><?php echo htmlspecialchars($row['username']); ?></td>
-                        <td><?php echo htmlspecialchars($row['role']); ?></td>
+                        <td>
+                            <?php
+                            $r = $row['role'];
+                            $label = ['admin'=>'Admin','teknisi'=>'Teknisi','user'=>'User'];
+                            echo '<span class="badge badge-'.$r.'">'.htmlspecialchars($label[$r] ?? $r).'</span>';
+                            ?>
+                        </td>
                         <td>
                             <?php if($isAdmin){ ?>
                                 <a href="edit.php?id=<?php echo $row['id_pengguna']; ?>" class="btn-edit">Edit</a>
@@ -115,8 +131,8 @@ if(!$query){
                 </tbody>
 
             </table>
-
-        </div>
+        </div><!-- end table-wrapper -->
+        </div><!-- end table-container -->
 
     </div>
 

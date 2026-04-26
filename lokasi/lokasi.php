@@ -59,10 +59,20 @@ WHERE deleted_at IS NULL
             <h1>Data Lokasi</h1>
         </div>
 
+        <?php if(isset($_GET['pesan'])): ?>
+        <div class="alert alert-success">✅ <?= $_GET['pesan']==='berhasil' ? 'Lokasi berhasil disimpan.' : ($_GET['pesan']==='update_berhasil' ? 'Lokasi berhasil diupdate.' : ($_GET['pesan']==='hapus_berhasil' ? 'Lokasi berhasil dihapus.' : htmlspecialchars($_GET['pesan']))) ?></div>
+        <?php elseif(isset($_GET['error'])): ?>
+        <div class="alert alert-danger">⚠️ Terjadi kesalahan. Silakan coba lagi.</div>
+        <?php endif; ?>
+
         <div class="table-container">
 
-            <a href="tambah_lokasi.php" class="btn-tambah">+ Tambah Lokasi</a>
+            <div class="table-header">
+                <span class="table-header-title">Daftar Lokasi</span>
+                <a href="tambah_lokasi.php" class="btn-tambah">+ Tambah Lokasi</a>
+            </div>
 
+            <div class="table-wrapper">
             <table>
 
                 <thead>
@@ -93,8 +103,8 @@ WHERE deleted_at IS NULL
                 </tbody>
 
             </table>
-
-        </div>
+            </div><!-- end table-wrapper -->
+        </div><!-- end table-container -->
 
     </div>
 

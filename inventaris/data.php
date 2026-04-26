@@ -59,12 +59,22 @@ $query = mysqli_query($koneksi, "
             <h1>Data Inventaris</h1>
         </div>
     
+        <?php if(isset($_GET['pesan'])): ?>
+        <div class="alert alert-success">✅ <?= $_GET['pesan']==='berhasil' ? 'Data berhasil disimpan.' : ($_GET['pesan']==='update_berhasil' ? 'Data berhasil diupdate.' : ($_GET['pesan']==='hapus_berhasil' ? 'Data berhasil dihapus.' : htmlspecialchars($_GET['pesan']))) ?></div>
+        <?php elseif(isset($_GET['error'])): ?>
+        <div class="alert alert-danger">⚠️ Terjadi kesalahan. Silakan coba lagi.</div>
+        <?php endif; ?>
+
         <div class="table-container">
 
-            <?php if($isAdmin || $isTeknisi){ ?>
-                <a href="tambah.php" class="btn-tambah">+ Tambah Inventaris</a>
-            <?php } ?>
+            <div class="table-header">
+                <span class="table-header-title">Daftar Inventaris</span>
+                <?php if($isAdmin || $isTeknisi){ ?>
+                    <a href="tambah.php" class="btn-tambah">+ Tambah Inventaris</a>
+                <?php } ?>
+            </div>
 
+            <div class="table-wrapper">
             <table>
     
                 <thead>
@@ -96,7 +106,13 @@ $query = mysqli_query($koneksi, "
                         <td><?php echo htmlspecialchars($row['jenis']); ?></td>
                         <td><?php echo htmlspecialchars($row['merk']); ?></td>
                         <td><?php echo htmlspecialchars($row['nama_lokasi']); ?></td>
-                        <td><?php echo htmlspecialchars($row['status']); ?></td>
+                        <td>
+                            <?php
+                            $st = $row['status'];
+                            $label = ['tersedia'=>'Tersedia','dipinjam'=>'Dipinjam','rusak'=>'Rusak'];
+                            echo '<span class="badge badge-'.$st.'">'.htmlspecialchars($label[$st] ?? $st).'</span>';
+                            ?>
+                        </td>
                         <td>
 
                             <?php if($isAdmin || $isTeknisi){ ?>
@@ -114,8 +130,8 @@ $query = mysqli_query($koneksi, "
                 </tbody>
 
             </table>
-                            
-        </div>
+            </div><!-- end table-wrapper -->
+        </div><!-- end table-container -->
                             
     </div>
                             

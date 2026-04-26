@@ -66,7 +66,7 @@ $csrf_token = $_SESSION['csrf_token'];
 
                 <div class="form-group">
                     <label>Password</label>
-                    <div style="display:flex; gap:10px;">
+                    <div class="password-field">
                         <input type="password" id="password" name="password"
                             placeholder="Minimal 6 karakter" required minlength="6">
                         <button type="button" onclick="togglePassword()">Lihat</button>

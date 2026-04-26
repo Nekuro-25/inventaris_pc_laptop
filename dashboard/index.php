@@ -138,75 +138,105 @@ if($isUser){
 
         <div class="cards">
 
-        <!-- ADMIN -->
-        <?php if($isAdmin){ ?>
+            <?php if($isAdmin){ ?>
 
-            <div class="card card-primary">
-                <h3>Total Inventaris</h3>
-                <p><?= $total_inventaris; ?></p>
-            </div>
+    <div class="card card-primary">
+        <div class="card-icon">📦</div>
+        <div class="card-info">
+            <h3>Total Inventaris</h3>
+            <p><?= $total_inventaris; ?></p>
+        </div>
+    </div>
 
-            <div class="card card-success">
-                <h3>Total PC</h3>
-                <p><?= $total_pc; ?></p>
-            </div>
+    <div class="card card-success">
+        <div class="card-icon">🖥️</div>
+        <div class="card-info">
+            <h3>Total PC</h3>
+            <p><?= $total_pc; ?></p>
+        </div>
+    </div>
 
-            <div class="card card-success">
-                <h3>Total Laptop</h3>
-                <p><?= $total_laptop; ?></p>
-            </div>
+    <div class="card card-success">
+        <div class="card-icon">💻</div>
+        <div class="card-info">
+            <h3>Total Laptop</h3>
+            <p><?= $total_laptop; ?></p>
+        </div>
+    </div>
 
-            <div class="card card-danger">
-                <h3>Perangkat Rusak</h3>
-                <p><?= $total_rusak; ?></p>
-            </div>
+    <div class="card card-danger">
+        <div class="card-icon">🔧</div>
+        <div class="card-info">
+            <h3>Perangkat Rusak</h3>
+            <p><?= $total_rusak; ?></p>
+        </div>
+    </div>
 
-            <div class="card card-primary">
-                <h3>Total Peminjaman</h3>
-                <p><?= $total_peminjaman; ?></p>
-            </div>
+    <div class="card card-warning">
+        <div class="card-icon">📋</div>
+        <div class="card-info">
+            <h3>Total Peminjaman</h3>
+            <p><?= $total_peminjaman; ?></p>
+        </div>
+    </div>
 
-            <div class="card card-success">
-                <h3>Sedang Dipinjam</h3>
-                <p><?= $sedang_dipinjam; ?></p>
-            </div>
+    <div class="card card-primary">
+        <div class="card-icon">🔄</div>
+        <div class="card-info">
+            <h3>Sedang Dipinjam</h3>
+            <p><?= $sedang_dipinjam; ?></p>
+        </div>
+    </div>
 
-            <div class="card card-primary">
-                <h3>Total User</h3>
-                <p><?= $total_user; ?></p>
-            </div>
+    <div class="card card-purple">
+        <div class="card-icon">👥</div>
+        <div class="card-info">
+            <h3>Total User</h3>
+            <p><?= $total_user; ?></p>
+        </div>
+    </div>
 
-        <?php } ?>
+            <?php } ?>
 
-        <!-- TEKNISI -->
-        <?php if($isTeknisi){ ?>
+            <?php if($isTeknisi){ ?>
 
-            <div class="card card-danger">
-                <h3>Perangkat Rusak</h3>
-                <p><?= $total_rusak; ?></p>
-            </div>
+    <div class="card card-danger">
+        <div class="card-icon">🔧</div>
+        <div class="card-info">
+            <h3>Perangkat Rusak</h3>
+            <p><?= $total_rusak; ?></p>
+        </div>
+    </div>
 
-            <div class="card card-primary">
-                <h3>Total Perbaikan</h3>
-                <p><?= $total_perbaikan; ?></p>
-            </div>
+    <div class="card card-warning">
+        <div class="card-icon">🛠️</div>
+        <div class="card-info">
+            <h3>Total Perbaikan</h3>
+            <p><?= $total_perbaikan; ?></p>
+        </div>
+    </div>
 
-        <?php } ?>
+            <?php } ?>
 
-        <!-- USER -->
-        <?php if($isUser){ ?>
+            <?php if($isUser){ ?>
 
-            <div class="card card-primary">
-                <h3>Peminjaman Saya</h3>
-                <p><?= $peminjaman_saya; ?></p>
-            </div>
+    <div class="card card-primary">
+        <div class="card-icon">📋</div>
+        <div class="card-info">
+            <h3>Peminjaman Saya</h3>
+            <p><?= $peminjaman_saya; ?></p>
+        </div>
+    </div>
 
-            <div class="card card-success">
-                <h3>Sedang Dipinjam</h3>
-                <p><?= $dipinjam_saya; ?></p>
-            </div>
+    <div class="card card-success">
+        <div class="card-icon">🔄</div>
+        <div class="card-info">
+            <h3>Sedang Dipinjam</h3>
+            <p><?= $dipinjam_saya; ?></p>
+        </div>
+    </div>
 
-        <?php } ?>
+            <?php } ?>
 
         </div>
 

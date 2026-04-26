@@ -63,10 +63,20 @@ AND inventaris.deleted_at IS NULL
             <h1>Data Peminjaman</h1>
         </div>
     
+        <?php if(isset($_GET['pesan'])): ?>
+        <div class="alert alert-success">✅ <?= $_GET['pesan']==='berhasil' ? 'Peminjaman berhasil dicatat.' : ($_GET['pesan']==='kembali_berhasil' ? 'Barang berhasil dikembalikan.' : ($_GET['pesan']==='hapus_berhasil' ? 'Data berhasil dihapus.' : htmlspecialchars($_GET['pesan']))) ?></div>
+        <?php elseif(isset($_GET['error'])): ?>
+        <div class="alert alert-danger">⚠️ Terjadi kesalahan. Silakan coba lagi.</div>
+        <?php endif; ?>
+    
         <div class="table-container">
 
-            <a href="tambah.php" class="btn-tambah">+ Tambah Peminjaman</a>
+            <div class="table-header">
+                <span class="table-header-title">Daftar Peminjaman</span>
+                <a href="tambah.php" class="btn-tambah">+ Tambah Peminjaman</a>
+            </div>
 
+            <div class="table-wrapper">
             <table>
     
                 <thead>
@@ -98,7 +108,13 @@ AND inventaris.deleted_at IS NULL
                         <td><?= htmlspecialchars($row['nama_peminjam']); ?></td>
                         <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
                         <td><?= htmlspecialchars($row['tanggal_kembali']); ?></td>
-                        <td><?= htmlspecialchars($row['status']); ?></td>
+                        <td>
+                            <?php
+                            $st = $row['status'];
+                            $label = ['dipinjam'=>'Dipinjam','kembali'=>'Dikembalikan'];
+                            echo '<span class="badge badge-'.$st.'">'.htmlspecialchars($label[$st] ?? $st).'</span>';
+                            ?>
+                        </td>
                         <td>
                             <?php if($row['status'] == 'dipinjam'){ ?>
                                 <a href="kembali.php?id=<?php echo $row['id']; ?>" class="btn-edit">Kembalikan</a>
@@ -115,8 +131,8 @@ AND inventaris.deleted_at IS NULL
                 </tbody>
 
             </table>
-                                
-        </div>
+            </div><!-- end table-wrapper -->
+        </div><!-- end table-container -->
                                 
     </div>
                                 

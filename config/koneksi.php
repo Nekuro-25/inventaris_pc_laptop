@@ -24,7 +24,7 @@ if (file_exists($env_path)) {
 
 $host     = $_ENV['DB_HOST'] ?? 'localhost';
 $user     = $_ENV['DB_USER'] ?? 'root';
-$password = $_ENV['DB_PASS'] ?? '';
+$password = $_ENV['DB_PASS'] ?? 'root';
 $database = $_ENV['DB_NAME'] ?? 'inventaris_db';
 
 $koneksi = mysqli_connect($host, $user, $password, $database);

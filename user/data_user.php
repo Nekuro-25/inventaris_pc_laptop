@@ -5,9 +5,11 @@ include("../config/koneksi.php");
 onlyAdmin();
 
 /* ambil data user (soft delete aktif) */
+// nop: nambah sorting biar konsisten
 $query = mysqli_query($koneksi,"
     SELECT * FROM pengguna 
     WHERE deleted_at IS NULL
+    ORDER BY id_pengguna DESC
 ");
 
 /* cek error query */
@@ -64,9 +66,11 @@ if(!$query){
         </div>
 
         <?php if(isset($_GET['pesan'])): ?>
-        <div class="alert alert-success">✅ <?= $_GET['pesan']==='berhasil' ? 'User berhasil ditambahkan.' : ($_GET['pesan']==='hapus_berhasil' ? 'User berhasil dihapus.' : ($_GET['pesan']==='update_berhasil' ? 'User berhasil diupdate.' : htmlspecialchars($_GET['pesan']))) ?></div>
+        <div class="alert alert-success">
+            ✅ <?= $_GET['pesan']==='berhasil' ? 'User berhasil ditambahkan.' : ($_GET['pesan']==='hapus_berhasil' ? 'User berhasil dihapus.' : ($_GET['pesan']==='update_berhasil' ? 'User berhasil diupdate.' : htmlspecialchars($_GET['pesan']))) ?></div>
         <?php elseif(isset($_GET['error'])): ?>
-        <div class="alert alert-danger">⚠️ Terjadi kesalahan. Silakan coba lagi.</div>
+        <div class="alert alert-danger">
+            ⚠️ Terjadi kesalahan. Silakan coba lagi.</div>
         <?php endif; ?>
 
         <div class="table-container">
@@ -80,9 +84,7 @@ if(!$query){
 
         <div class="table-wrapper">
         <table>
-
                 <thead>
-
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
@@ -90,19 +92,15 @@ if(!$query){
                         <th>Role</th>
                         <th>Aksi</th>
                     </tr>
-
                 </thead>
-
                 <tbody>
-
                     <?php
                     $no = 1;
-
-                    while($row = mysqli_fetch_assoc($query)){
+                    // cek apakah ada data di dalam tabel
+                    if(mysqli_num_rows($query) > 0) {
+                        while($row = mysqli_fetch_assoc($query)){
                     ?>
-
                     <tr>
-
                         <td><?php echo $no++; ?></td>    
                         <td><?php echo htmlspecialchars($row['nama']); ?></td>
                         <td><?php echo htmlspecialchars($row['username']); ?></td>
@@ -117,25 +115,26 @@ if(!$query){
                             <?php if($isAdmin){ ?>
                                 <a href="edit.php?id=<?php echo $row['id_pengguna']; ?>" class="btn-edit">Edit</a>
                                 <a href="hapus_user.php?id=<?php echo $row['id_pengguna']; ?>" 
-                                   class="btn-hapus"
-                                   onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
-                                   Hapus
+                                    class="btn-hapus"
+                                    onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
+                                    Hapus
                                 </a>
                             <?php } ?>
                         </td>
-
                     </tr>
-                    
+                    <?php 
+                        }
+                    } else { 
+                        ?>
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding: 20px">belum ada data pengguna.</td>
+                        </tr>
                     <?php } ?>
-            
                 </tbody>
-
             </table>
         </div><!-- end table-wrapper -->
         </div><!-- end table-container -->
-
     </div>
-
 </div>
 
 <script src="../js/konfirmasi.js"></script>

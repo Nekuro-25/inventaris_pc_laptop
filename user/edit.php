@@ -104,9 +104,9 @@ if(!$query){
                             <?php if($isAdmin){ ?>
                                 <a href="edit.php?id=<?php echo urlencode($row['id_pengguna']); ?>" class="btn-edit">Edit</a>
                                 <a href="hapus_user.php?id=<?php echo urlencode($row['id_pengguna']); ?>" 
-                                   class="btn-hapus"
-                                   onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
-                                   Hapus
+                                    class="btn-hapus"
+                                    onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
+                                    Hapus
                                 </a>
                             <?php } ?>
                         </td>

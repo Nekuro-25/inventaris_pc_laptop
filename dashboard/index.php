@@ -1,7 +1,14 @@
 <?php
+// mulai session 
+session_start();
 
-include("../config/auth.php");
-include("../config/koneksi.php");
+if (!isset($_SESSION['username'])) {
+    header("Location: ../index.php?error=belum_login");
+    exit();
+}
+
+include '../config/koneksi.php';
+?>
 
 /* helper function */
 function getTotal($koneksi, $query){

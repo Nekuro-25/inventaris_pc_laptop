@@ -7,6 +7,7 @@ blockUser();
 $query = mysqli_query($koneksi,"
 SELECT * FROM lokasi 
 WHERE deleted_at IS NULL
+ORDER BY id_lokasi DESC
 ");
 
 ?>
@@ -59,10 +60,22 @@ WHERE deleted_at IS NULL
             <h1>Data Lokasi</h1>
         </div>
 
+        <!-- ✅ FIX: Blok Notifikasi Error yang Diperbarui -->
         <?php if(isset($_GET['pesan'])): ?>
-        <div class="alert alert-success">✅ <?= $_GET['pesan']==='berhasil' ? 'Lokasi berhasil disimpan.' : ($_GET['pesan']==='update_berhasil' ? 'Lokasi berhasil diupdate.' : ($_GET['pesan']==='hapus_berhasil' ? 'Lokasi berhasil dihapus.' : htmlspecialchars($_GET['pesan']))) ?></div>
+            <div class="alert alert-success">
+                ✅ <?= $_GET['pesan']==='berhasil' ? 'Lokasi berhasil disimpan.' : ($_GET['pesan']==='update_berhasil' ? 'Lokasi berhasil diupdate.' : ($_GET['pesan']==='hapus_berhasil' ? 'Lokasi berhasil dihapus.' : htmlspecialchars($_GET['pesan']))) ?>
+            </div>
         <?php elseif(isset($_GET['error'])): ?>
-        <div class="alert alert-danger">⚠️ Terjadi kesalahan. Silakan coba lagi.</div>
+            <div class="alert alert-danger">
+                ⚠️ 
+                <?php 
+                if ($_GET['error'] === 'lokasi_sedang_terpakai') {
+                    echo 'Lokasi gagal dihapus karena masih ada barang yang menggunakan lokasi ini. Pindahkan barang terlebih dahulu.';
+                } else {
+                    echo 'Terjadi kesalahan: ' . htmlspecialchars($_GET['error']);
+                }
+                ?>
+            </div>
         <?php endif; ?>
 
         <div class="table-container">
@@ -87,8 +100,9 @@ WHERE deleted_at IS NULL
                     
                     <?php
                     $no = 1;
-
-                    while($row = mysqli_fetch_assoc($query)){
+                    // FIX: cek apakah ada data lokasi 
+                    if(mysqli_num_rows($query) > 0) {
+                        while($row = mysqli_fetch_assoc($query)){
                     ?>
 
                     <tr>
@@ -99,7 +113,15 @@ WHERE deleted_at IS NULL
                             <a href="hapus_lokasi.php?id_lokasi=<?php echo $row['id_lokasi']; ?>"class="btn-hapus"onclick="return konfirmasiHapus()">Hapus</a>
                         </td>
                     </tr>
+                    <?php 
+                        } 
+                    } else {
+                    ?>
+                    <tr>
+                        <td colspan="3" style="text-align: center;">Belum ada data lokasi.</td>
+                    </tr>
                     <?php } ?>
+
                 </tbody>
 
             </table>

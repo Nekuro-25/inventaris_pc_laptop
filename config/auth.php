@@ -1,73 +1,171 @@
 <?php
-include("../config/koneksi.php");
 
-/* Pastikan session aktif */
+/* Memuat koneksi database */
+
+require_once __DIR__ . "/koneksi.php";
+
+/* Memastikan session sudah aktif */
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/* Cek login dasar */
-if (!isset($_SESSION['username'])) {
+/* Memastikan user sudah login */
+
+if (
+    !isset($_SESSION['username']) ||
+    !is_string($_SESSION['username']) ||
+    trim($_SESSION['username']) === ''
+) {
+    session_destroy();
+
     header("Location: ../index.php");
     exit;
 }
 
-/* ✅ FIX: Prepared Statement — username dari session tetap harus aman */
-$username = $_SESSION['username'];
+/* Mengambil username dari session */
+
+$username = trim($_SESSION['username']);
+
+/* Menyiapkan prepared statement untuk mengambil data user */
 
 $stmt = mysqli_prepare($koneksi, "
-    SELECT * FROM pengguna 
-    WHERE username = ? 
+    SELECT
+        id_pengguna,
+        username,
+        role
+    FROM pengguna
+    WHERE username = ?
     AND deleted_at IS NULL
     LIMIT 1
 ");
-mysqli_stmt_bind_param($stmt, "s", $username);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$user = mysqli_fetch_assoc($result);
-mysqli_stmt_close($stmt);
 
-/* Jika user tidak ditemukan (misal sudah dihapus) */
-if (!$user) {
+/* Menghentikan proses jika query gagal dipersiapkan */
+
+if (!$stmt) {
+
     session_destroy();
+
     header("Location: ../index.php");
     exit;
 }
 
-/* Sinkronisasi session */
-$_SESSION['role']        = $user['role'];
-$_SESSION['id_pengguna'] = $user['id_pengguna'];
+/* Mengikat username ke query */
 
-/* Role flags */
-$isAdmin   = ($user['role'] == 'admin');
-$isTeknisi = ($user['role'] == 'teknisi');
-$isUser    = ($user['role'] == 'user');
+mysqli_stmt_bind_param($stmt, "s", $username);
 
-/* =========================
-   HELPER AKSES
-   ========================= */
+/* Menjalankan query */
 
-function onlyAdmin() {
+if (!mysqli_stmt_execute($stmt)) {
+
+    mysqli_stmt_close($stmt);
+
+    session_destroy();
+
+    header("Location: ../index.php");
+    exit;
+}
+
+/* Mengambil data user dari database */
+
+$result = mysqli_stmt_get_result($stmt);
+
+/* Menghentikan proses jika hasil query tidak valid */
+
+if (!$result) {
+
+    mysqli_stmt_close($stmt);
+
+    session_destroy();
+
+    header("Location: ../index.php");
+    exit;
+}
+
+$user = mysqli_fetch_assoc($result);
+
+/* Membebaskan resource query */
+
+mysqli_free_result($result);
+
+mysqli_stmt_close($stmt);
+
+/* Memastikan user masih tersedia di database */
+
+if (!$user) {
+
+    session_destroy();
+
+    header("Location: ../index.php");
+    exit;
+}
+
+/* Normalisasi role */
+
+$user['role'] = strtolower(trim($user['role']));
+
+/* Memastikan role valid */
+
+$allowed_roles = [
+    'admin',
+    'teknisi',
+    'user'
+];
+
+if (!in_array($user['role'], $allowed_roles, true)) {
+
+    session_destroy();
+
+    header("Location: ../index.php");
+    exit;
+}
+
+/* Menyinkronkan data session dengan database */
+
+$_SESSION['id_pengguna'] = (int) $user['id_pengguna'];
+$_SESSION['username'] = $user['username'];
+$_SESSION['role'] = $user['role'];
+
+/* Menentukan role user yang sedang login */
+
+$isAdmin = ($user['role'] === 'admin');
+$isTeknisi = ($user['role'] === 'teknisi');
+$isUser = ($user['role'] === 'user');
+
+/* Membatasi akses hanya untuk admin */
+
+function onlyAdmin()
+{
     global $isAdmin;
+
     if (!$isAdmin) {
         header("Location: ../dashboard/index.php");
         exit;
     }
 }
 
-function adminOrTeknisi() {
+/* Mengizinkan akses untuk admin dan teknisi */
+
+function adminOrTeknisi()
+{
     global $isAdmin, $isTeknisi;
+
     if (!$isAdmin && !$isTeknisi) {
         header("Location: ../dashboard/index.php");
         exit;
     }
 }
 
-function blockUser() {
+/* Memblokir akses untuk user biasa */
+
+function blockUser()
+{
     global $isUser;
+
     if ($isUser) {
         header("Location: ../dashboard/index.php");
         exit;
     }
 }
+
 ?>

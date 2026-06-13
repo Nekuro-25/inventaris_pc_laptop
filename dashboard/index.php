@@ -1,9 +1,21 @@
 <?php
 
-/* Memuat autentikasi user dan koneksi database */
+/* Memuat autentikasi user */
 
 require_once __DIR__ . "/../config/auth.php";
-require_once __DIR__ . "/../config/koneksi.php";
+
+/* Inisialisasi nilai default */
+
+$total_pc = 0;
+$total_laptop = 0;
+$total_rusak = 0;
+$total_inventaris = 0;
+$total_peminjaman = 0;
+$sedang_dipinjam = 0;
+$total_user = 0;
+$total_perbaikan = 0;
+$peminjaman_saya = 0;
+$dipinjam_saya = 0;
 
 /* Helper untuk mengambil total data dari query COUNT */
 
@@ -100,8 +112,6 @@ if ($isTeknisi) {
 
 if ($isUser) {
 
-    /* Mengambil ID user dari session login */
-
     $user_id = (int) $_SESSION['id_pengguna'];
 
     $peminjaman_saya = getTotal($koneksi, "
@@ -194,8 +204,8 @@ if ($isUser) {
 
             <p>
                 Halo,
-                <?= htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8'); ?>
-                (<?= htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?>)
+                <?= htmlspecialchars($_SESSION['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                (<?= htmlspecialchars($_SESSION['role'] ?? '', ENT_QUOTES, 'UTF-8'); ?>)
             </p>
 
         </div>

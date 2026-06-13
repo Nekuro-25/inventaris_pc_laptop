@@ -61,7 +61,7 @@ $csrf_token = $_SESSION['csrf_token'];
 
                 <div class="form-group">
                     <label>Username</label>
-                    <input type="text" name="username" placeholder="Masukkan username" required maxlength="50">
+                    <input type="text" name="username" placeholder="Masukkan username" required minlength="3" required maxlength="50">
                 </div>
 
                 <div class="form-group">

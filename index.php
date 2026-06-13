@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+/* Membuat CSRF token jika belum ada di session untuk mencegah request palsu dari luar */
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -21,13 +30,23 @@
         </header>
 
         <!-- PESAN ERROR -->
-        <?php if(isset($_GET['error'])){ ?>
-            <div class="error-message">
-                Username atau password salah!
-            </div>
-        <?php } ?>
+        <?php
+        /* Mengambil parameter error dari URL untuk menampilkan pesan sesuai validasi backend */
+        $error = $_GET['error'] ?? null;
+
+        if ($error === 'empty') {
+            echo '<div class="error-message">Username dan password tidak boleh kosong!</div>';
+        } elseif ($error === 'format') {
+            echo '<div class="error-message">Format username atau password tidak valid!</div>';
+        } elseif ($error === 'invalid') {
+            echo '<div class="error-message">Username atau password salah!</div>';
+        }
+        ?>
 
         <form action="login/proses_login.php" method="POST" autocomplete="off">
+
+            <!-- CSRF TOKEN untuk validasi request di server agar tidak bisa dipalsukan -->
+            <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
 
             <div class="input-group">
                 <label for="username">Username</label>
@@ -38,6 +57,7 @@
                     placeholder="Masukkan Username" 
                     required
                     minlength="3"
+                    autocomplete="username"
                 >
             </div>
 
@@ -52,9 +72,10 @@
                         placeholder="Masukkan Password" 
                         required
                         minlength="6"
+                        autocomplete="current-password"
                     >
 
-                    <button type="button" onclick="togglePassword()">
+                    <button type="button" onclick="togglePassword(this)">
                         Lihat
                     </button>
                 </div>
@@ -70,9 +91,17 @@
 </main>
 
 <script>
-function togglePassword() {
+/* Toggle untuk melihat dan menyembunyikan password agar user lebih mudah cek input */
+function togglePassword(btn) {
     const password = document.getElementById("password");
-    password.type = password.type === "password" ? "text" : "password";
+
+    if (password.type === "password") {
+        password.type = "text";
+        btn.textContent = "Sembunyikan";
+    } else {
+        password.type = "password";
+        btn.textContent = "Lihat";
+    }
 }
 </script>
 

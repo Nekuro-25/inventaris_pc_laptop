@@ -1,54 +1,56 @@
-/*Untuk login ke dashboard, ada 4 lapis sistem. Guard (Validasi dan CSRF), Input validasi, Autentikasi database, Sesi */
-
-/* Mengaktifkan sistem session PHP dan mengambil sistem koneksi untuk dipakai sebagai penghubung ke database*/
-
 <?php
-session_start();
-require_once __DIR__ . "/../config/koneksi.php"; 
 
-/* Memastikan endpoint hanya bisa diakses via POST karena GET bisa dibuka via URL browser dan untuk mencegah abuse / direct access */
+/* Sistem login terdiri dari 4 lapisan: Guard (Request & CSRF), Validasi Input, Autentikasi Database, dan Session */
+
+/* Mengaktifkan session PHP dan memuat file koneksi database */
+
+session_start();
+require_once __DIR__ . "/../config/koneksi.php";
+
+/* Memastikan halaman hanya menerima request POST dan tidak bisa diakses langsung melalui URL */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../index.php?error=invalid");
     exit;
 }
 
-/* Mengambil input dari request dengan filtering dan lebih aman daripada $_POST langsung serta strukturnya lebih rapi*/
+/* Mengambil data dari form login */
 
-/* trim untuk menghilangkan spasi di awal dan akhir agar tidak terjadi kesalahan */
+/* trim digunakan untuk menghapus spasi di awal dan akhir username agar input lebih konsisten */
 
-$username = trim(filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW));
-$password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
-$csrf     = filter_input(INPUT_POST, 'csrf', FILTER_UNSAFE_RAW);
+$username = trim((string) filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW));
+$password = (string) filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
+$csrf     = (string) filter_input(INPUT_POST, 'csrf', FILTER_UNSAFE_RAW);
 
-/* Membandingkan token dengan aman. Untuk mencegah mencegah timing attack (side-channel attack) */
+/* Memastikan CSRF token yang dikirim form sesuai dengan token yang tersimpan di session */
 
 if (empty($_SESSION['csrf']) || empty($csrf) || !hash_equals($_SESSION['csrf'], $csrf)) {
     header("Location: ../index.php?error=invalid");
     exit;
 }
 
-/* 2. Cek apakah variabelnya kosong */
+/* Memastikan username dan password tidak kosong */
 
 if (empty($username) || empty($password)) {
     header("Location: ../index.php?error=empty");
     exit;
 }
 
-/* 3. Validasi format username untuk mencegah karakter aneh (SQL/XSS injection) */
+/* Memvalidasi format username agar hanya berisi huruf, angka, dan underscore */
+
 if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
     header("Location: ../index.php?error=format");
     exit;
 }
 
-/* Minimal password 6 digit */
+/* Memastikan password minimal terdiri dari 6 karakter */
 
 if (strlen($password) < 6) {
     header("Location: ../index.php?error=format");
     exit;
 }
 
-/* Prepared statement untuk mencegah SQL Injection */
+/* Menyiapkan prepared statement untuk mencegah SQL Injection */
 
 $stmt = mysqli_prepare($koneksi, "
     SELECT id_pengguna, username, password, role
@@ -58,17 +60,48 @@ $stmt = mysqli_prepare($koneksi, "
     LIMIT 1
 ");
 
-/* Mengikat parameter ke query */
+/* Menghentikan proses jika query gagal dipersiapkan */
+
+if (!$stmt) {
+    header("Location: ../index.php?error=invalid");
+    exit;
+}
+
+/* Mengikat username ke query dan menjalankannya */
 
 mysqli_stmt_bind_param($stmt, "s", $username);
-mysqli_stmt_execute($stmt);
 
-$result = mysqli_stmt_get_result($stmt);
-$data = mysqli_fetch_assoc($result);
+if (!mysqli_stmt_execute($stmt)) {
+    mysqli_stmt_close($stmt);
+
+    header("Location: ../index.php?error=invalid");
+    exit;
+}
+
+/* Mengambil hasil query tanpa mysqli_stmt_get_result agar kompatibel dengan lebih banyak environment PHP */
+
+mysqli_stmt_bind_result(
+    $stmt,
+    $id_pengguna,
+    $db_username,
+    $db_password,
+    $role
+);
+
+$data = null;
+
+if (mysqli_stmt_fetch($stmt)) {
+    $data = [
+        'id_pengguna' => $id_pengguna,
+        'username'    => $db_username,
+        'password'    => $db_password,
+        'role'        => $role
+    ];
+}
 
 mysqli_stmt_close($stmt);
 
-/* Validasi Password, password di DB pakai hash dan mengganti session id setelah login, menyimpan state login user, menghapus CSRF setelah login, redirect user ke dashboard */
+/* Memverifikasi password hash, membuat session login, lalu mengarahkan user ke dashboard */
 
 if ($data && password_verify($password, $data['password'])) {
 
@@ -84,7 +117,8 @@ if ($data && password_verify($password, $data['password'])) {
     exit;
 }
 
-/* INVALID LOGIN */
+/* Username atau password tidak sesuai */
+
 header("Location: ../index.php?error=invalid");
 exit;
 ?>

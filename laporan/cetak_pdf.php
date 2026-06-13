@@ -38,50 +38,92 @@ ob_start();
     <title>Laporan Inventaris</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-        }
 
-        .header {
-            text-align: center;
-        }
+    body{
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        color: #2f2f2f;
+    }
+    
+    .header{
+        text-align:center;
+        padding:15px;
+        border:1px solid #e6e0d6;
+        background:#faf8f4;
+    }
+    
+    .header h2{
+        margin:0 0 5px 0;
+        color:#557a60;
+    }
+    
+    .header p{
+        margin:0;
+        color:#7a7a7a;
+    }
+    
+    hr{
+        border:none;
+        border-top:1px solid #e6e0d6;
+        margin:20px 0;
+    }
+    
+    table{
+        width:100%;
+        border-collapse:collapse;
+    }
+    
+    th{
+        background:#faf8f4;
+        color:#2f2f2f;
+        border:1px solid #e6e0d6;
+        padding:8px;
+    }
+    
+    td{
+    border:1px solid #e6e0d6;
+    padding:8px;
+    }
 
-        .header h2 {
-            margin-bottom: 5px;
-        }
+    .no{
+        text-align:center;
+        width:40px;
+    }
 
-        .header p {
-            margin-top: 0;
-            font-size: 12px;
-        }
+    .center{
+        text-align:center;
+    }
 
-        hr {
-            margin: 15px 0;
-        }
+    .badge{
+        padding:3px 8px;
+        border-radius:20px;
+        font-size:11px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    .tersedia{
+        background:#dfe9dd;
+        color:#567052;
+    }
 
-        table, th, td {
-            border: 1px solid #000;
-        }
+    .dipinjam{
+        background:#eee3c9;
+        color:#80652d;
+    }
 
-        th {
-            background-color: #f2f2f2;
-        }
+    .rusak{
+        background:#f1d9d4;
+        color:#944f42;
+    }
 
-        th, td {
-            padding: 6px;
-            text-align: center;
-        }
+    .footer{
+        margin-top:40px;
+        text-align:right;
+    }
 
-        .footer {
-            margin-top: 30px;
-            text-align: right;
-        }
+    .footer p{
+        margin:0;
+    }
+
     </style>
 
 </head>
@@ -119,7 +161,23 @@ ob_start();
             <td><?= htmlspecialchars($row['jenis']) ?></td>
             <td><?= htmlspecialchars($row['merk']) ?></td>
             <td><?= htmlspecialchars($row['nama_lokasi']) ?></td>
-            <td><?= htmlspecialchars($row['status']) ?></td>
+            <td class="center">
+                <?php
+                    $status = strtolower($row['status']);
+                    if($status == 'tersedia'){
+                        echo '<span class="badge tersedia">Tersedia</span>';
+                    }
+                    elseif($status == 'dipinjam'){
+                        echo '<span class="badge dipinjam">Dipinjam</span>';
+                    }
+                    elseif($status == 'rusak'){
+                        echo '<span class="badge rusak">Rusak</span>';
+                    }
+                    else{
+                        echo htmlspecialchars($row['status']);
+                    }
+                ?>
+            </td>
         </tr>
     <?php } ?>
     </tbody>

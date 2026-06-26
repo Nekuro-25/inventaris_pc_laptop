@@ -1,0 +1,553 @@
+/* =========================
+   RESET
+========================= */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* =========================
+   THEME (EARTHY SOFT)
+========================= */
+:root {
+    --bg: #f3f1eb;
+    --card: #ffffff;
+    --text: #2f2f2f;
+    --muted: #7a7a7a;
+
+    --primary: #6b8f71;
+    --primary-dark: #557a60;
+
+    --border: #e6e0d6;
+
+    --danger: #c97a6a;
+    --warning: #c8a86a;
+    --success: #7f9b7a;
+    --purple: #9b89b3;
+}
+
+/* =========================
+   BODY
+========================= */
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(107,143,113,0.12), transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(160,140,120,0.10), transparent 60%);
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+    width: 250px;
+    background: var(--primary);
+    color: white;
+    padding: 24px 20px;
+}
+
+.sidebar h2 {
+    margin-bottom: 24px;
+    font-size: 22px;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    transition: 0.2s ease;
+}
+
+.sidebar a:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+.main {
+    flex: 1;
+    padding: 24px;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+.topbar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.04);
+}
+
+.topbar h1 {
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.topbar p {
+    color: var(--muted);
+}
+
+/* =========================
+   CARD GRID
+========================= */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+/* =========================
+   CARD
+========================= */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    box-shadow:
+        0 6px 16px rgba(0,0,0,0.04);
+
+    transition: 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-icon {
+    font-size: 34px;
+}
+
+.card-info h3 {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.card-info p {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* =========================
+   CARD ACCENTS
+========================= */
+.card-primary {
+    border-left: 5px solid var(--primary);
+}
+
+.card-success {
+    border-left: 5px solid var(--success);
+}
+
+.card-warning {
+    border-left: 5px solid var(--warning);
+}
+
+.card-danger {
+    border-left: 5px solid var(--danger);
+}
+
+.card-purple {
+    border-left: 5px solid var(--purple);
+}
+
+/* =========================
+   ALERT
+========================= */
+.alert {
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-size: 14px;
+}
+
+.alert-success {
+    background: rgba(127,155,122,0.12);
+    border-color: var(--success);
+    color: #4f6b4b;
+}
+
+.alert-danger {
+    background: rgba(201,122,106,0.12);
+    border-color: var(--danger);
+    color: #8d5246;
+}
+
+/* =========================
+   TABLE CONTAINER
+========================= */
+.table-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+
+    box-shadow:
+        0 6px 16px rgba(0,0,0,0.04);
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.table-header-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* =========================
+   TABLE
+========================= */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrapper th {
+    background: #faf8f4;
+    color: var(--text);
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.table-wrapper td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+}
+
+.table-wrapper tbody tr:hover {
+    background: rgba(107,143,113,0.05);
+}
+
+/* =========================
+   BADGE STATUS
+========================= */
+.badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-tersedia {
+    background: rgba(127,155,122,0.15);
+    color: #567052;
+}
+
+.badge-dipinjam {
+    background: rgba(200,168,106,0.18);
+    color: #80652d;
+}
+
+.badge-rusak {
+    background: rgba(201,122,106,0.15);
+    color: #944f42;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.btn-tambah,
+.btn-edit,
+.btn-hapus {
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.btn-tambah {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-tambah:hover {
+    background: var(--primary-dark);
+}
+
+.btn-edit {
+    background: rgba(107,143,113,0.12);
+    color: var(--primary-dark);
+    margin-right: 6px;
+}
+
+.btn-edit:hover {
+    background: rgba(107,143,113,0.20);
+}
+
+.btn-hapus {
+    background: rgba(201,122,106,0.12);
+    color: #944f42;
+}
+
+.btn-hapus:hover {
+    background: rgba(201,122,106,0.20);
+}
+
+/* =========================
+   FORM CONTAINER
+========================= */
+.form-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+
+    box-shadow:
+        0 6px 16px rgba(0,0,0,0.04);
+}
+
+/* =========================
+   FORM GROUP
+========================= */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: #fff;
+    color: var(--text);
+
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 3px rgba(107,143,113,0.15);
+}
+
+/* =========================
+   FORM BUTTONS
+========================= */
+.form-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* =========================
+   BUTTON SIMPAN
+========================= */
+.btn-simpan {
+    border: none;
+    cursor: pointer;
+
+    background: var(--primary);
+    color: white;
+
+    padding: 10px 18px;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.btn-simpan:hover {
+    background: var(--primary-dark);
+}
+
+/* =========================
+   BUTTON BATAL
+========================= */
+.btn-batal {
+    display: inline-block;
+    text-decoration: none;
+
+    background: #f5f3ee;
+    color: var(--text);
+
+    border: 1px solid var(--border);
+
+    padding: 10px 18px;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.btn-batal:hover {
+    background: #ece8df;
+}
+
+/* =========================
+   FILTER FORM
+========================= */
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: end;
+    margin-top: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    min-width: 180px;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* =========================
+   BUTTON FILTER
+========================= */
+.btn-filter {
+    border: none;
+    cursor: pointer;
+
+    background: var(--primary);
+    color: white;
+
+    padding: 10px 16px;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.btn-filter:hover {
+    background: var(--primary-dark);
+}
+
+/* =========================
+   BUTTON CETAK
+========================= */
+.btn-cetak {
+    text-decoration: none;
+
+    background: rgba(155,137,179,0.15);
+    color: var(--purple);
+
+    padding: 10px 16px;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.btn-cetak:hover {
+    background: rgba(155,137,179,0.25);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}

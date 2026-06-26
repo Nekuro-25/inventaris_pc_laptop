@@ -63,4 +63,4 @@ Akan muncul halaman Login
 Cek file SQL untuk username/password default. Biasanya:
 Role Username Password Admin admin01 admin01
 
-Proyek ini sekarang dikembangkan menggunakan Termux Bare-Metal di Android 14.
+Proyek ini sekarang dikembangkan menggunakan Termux di Android 14.

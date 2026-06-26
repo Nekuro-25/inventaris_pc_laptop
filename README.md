@@ -61,4 +61,6 @@ Akan muncul halaman Login
 
 🔑 LANGKAH 7 — Login & Testing
 Cek file SQL untuk username/password default. Biasanya:
-RoleUsernamePasswordAdminadminadmin123Teknisiteknisiteknisi123User biasauseruser123
+Role Username Password Admin admin01 admin01
+
+Proyek ini sekarang dikembangkan menggunakan Termux Bare-Metal di Android 14.

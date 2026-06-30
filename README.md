@@ -1,71 +1,195 @@
-🖥️ Yang Dibutuhkan Sebelum Mulai
-Project ini adalah aplikasi PHP + MySQL, jadi butuh:
+Sistem Inventaris PC & Laptop
 
-XAMPP (sudah include Apache + MySQL + PHP, gratis)
-Browser (Chrome, Firefox, dll)
-File project Inventaris yang sudah ada
+Aplikasi inventaris berbasis PHP Native dan MariaDB untuk mengelola data PC, laptop, peminjaman, perbaikan, serta manajemen pengguna.
 
+---
 
-📥 LANGKAH 1 — Install XAMPP
+Persyaratan
 
-Buka browser, pergi ke https://www.apachefriends.org
-Klik Download XAMPP for Windows
-Jalankan installer yang didownload → klik Next terus sampai selesai
-Setelah selesai, buka XAMPP Control Panel (muncul otomatis atau cari di Start Menu)
+Pastikan perangkat telah terpasang:
 
+- PHP 8.2 atau lebih baru
+- MariaDB 11+ / MySQL 8+
+- Git
+- Termux (Android) atau Linux
 
-▶️ LANGKAH 2 — Jalankan XAMPP
-Di XAMPP Control Panel:
+---
 
-Klik Start di baris Apache
-Klik Start di baris MySQL
-Keduanya harus berwarna hijau → artinya server sudah berjalan
+Clone Repository
 
+git clone git@github.com:Nekuro-25/inventaris_pc_laptop.git
+cd (masuk ke folder projek)
 
-📁 LANGKAH 3 — Taruh File Project
+---
 
-Buka File Explorer
-Pergi ke folder: C:\xampp\htdocs\
-Copy folder Inventaris (hasil extract zip tadi) ke dalam folder htdocs tersebut
-Hasilnya: C:\xampp\htdocs\Inventaris\
+Menjalankan MariaDB
 
+Jalankan service MariaDB:
 
-🗄️ LANGKAH 4 — Buat Database
+mariadbd-safe --datadir=$PREFIX/var/lib/mysql
 
-Buka browser → ketik http://localhost/phpmyadmin
-Klik New di panel kiri → beri nama database: inventaris_db → klik Create
-Setelah database terbuat, klik tab Import (di bagian atas)
-Klik Choose File → cari dan pilih file: C:\xampp\htdocs\Inventaris\database\inventaris_db.sql
-Klik Import (tombol di bawah) → tunggu sampai muncul pesan sukses hijau
+Masuk ke MariaDB:
 
+mariadb -u (username, tidak perlu tanda kurung) -p
 
-⚙️ LANGKAH 5 — Setting Koneksi Database
+---
 
-Buka file: C:\xampp\htdocs\Inventaris\config\koneksi.php (pakai Notepad atau VS Code)
-Pastikan isinya seperti ini:
+Membuat Database
 
-php$host = "localhost";
-$user = "root";
-$pass = "";           // kosong, default XAMPP
-$db   = "inventaris_db";
+Di MariaDB jalankan:
 
-Simpan file jika ada perubahan
+CREATE DATABASE inventaris_db;
 
+Import database:
 
-🌐 LANGKAH 6 — Buka Aplikasi
+mariadb -u <username> -p inventaris_db < database/inventaris_db.sql
 
-Buka browser
-Ketik: http://localhost/Inventaris
-Akan muncul halaman Login
+atau melalui prompt MariaDB sesuai kebutuhan.
 
+---
 
-🔑 LANGKAH 7 — Login & Testing
-Cek file SQL untuk username/password default. Biasanya:
-Role Username Password Admin admin01 admin01
+Konfigurasi Database
 
-Proyek ini sekarang dikembangkan menggunakan Termux di Android 14.
+Project menggunakan file ".env".
 
-Catatan: Branch ini khusus untuk optimasi Termux.
+Contoh:
 
-Mantra Hari Ini: Main adalah jalur rilis utama yang suci.
-Mantra Hari Ini: Termux adalah laboratorium eksperimen gila.
+DB_HOST=127.0.0.1
+DB_USER=NamaUserMariaDB
+DB_PASS=PasswordMariaDB
+DB_NAME=inventaris_db
+
+Penting
+
+Nilai berikut harus sama dengan akun MariaDB yang digunakan.
+
+Misalnya jika login MariaDB menggunakan:
+
+mariadb -u Nekuro -pNekuro25
+
+maka ".env" harus berisi:
+
+DB_USER=Nekuro
+DB_PASS=Nekuro25
+
+Jangan menggunakan "root" apabila MariaDB tidak dikonfigurasi menggunakan akun tersebut.
+
+---
+
+Menjalankan Web Server
+
+Masuk ke folder project lalu jalankan:
+
+php -S 127.0.0.1:8000
+
+Server akan berjalan di:
+
+http://127.0.0.1:8000
+
+Buka browser kemudian akses alamat tersebut.
+
+---
+
+Login Default
+
+Role| Username| Password
+Admin| admin01| admin01
+
+«Password pada database disimpan menggunakan "password_hash()".»
+
+---
+
+Struktur Folder
+
+config/
+database/
+dashboard/
+inventaris/
+js/
+css/
+laporan/
+lokasi/
+login/
+peminjaman/
+perbaikan/
+user/
+
+index.php
+logout.php
+.env
+README.md
+
+---
+
+Troubleshooting
+
+HTTP 500 saat Login
+
+Penyebab yang paling sering adalah konfigurasi database pada ".env" tidak sesuai.
+
+Periksa:
+
+DB_HOST
+DB_USER
+DB_PASS
+DB_NAME
+
+Pastikan user dan password sama dengan akun MariaDB yang digunakan.
+
+---
+
+Access denied for user
+
+Contoh:
+
+Access denied for user 'root'@'localhost'
+
+Artinya PHP mencoba login menggunakan akun yang salah.
+
+Perbaiki isi ".env".
+
+---
+
+Session atau Header Error
+
+Contoh:
+
+Headers already sent
+
+Biasanya terjadi karena masih ada:
+
+echo
+var_dump
+print_r
+
+yang digunakan saat debugging.
+
+Hapus seluruh output tersebut sebelum menjalankan aplikasi.
+
+---
+
+Tidak Bisa Masuk Dashboard
+
+Periksa:
+
+- Session aktif.
+- Konfigurasi ".env".
+- Database berhasil diimport.
+- User admin tersedia pada tabel "pengguna".
+
+---
+
+Catatan Pengembangan
+
+Project ini dikembangkan menggunakan:
+
+- PHP Native
+- MariaDB
+- Termux
+- Neovim
+
+Branch "main" digunakan sebagai branch stabil.
+
+Branch pengembangan digunakan untuk eksperimen sebelum perubahan digabungkan ke "main".
+
+Selalu lakukan pengujian sebelum melakukan merge ke branch utama.

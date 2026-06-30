@@ -43,10 +43,10 @@ if (empty($_SESSION['csrf'])) {
         }
         ?>
 
-        <form action="login/proses_login.php" method="POST" autocomplete="off">
+        <form action="login/proses_login.php" method="POST">
 
             <!-- CSRF TOKEN untuk validasi request di server agar tidak bisa dipalsukan -->
-            <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
 
             <div class="input-group">
                 <label for="username">Username</label>

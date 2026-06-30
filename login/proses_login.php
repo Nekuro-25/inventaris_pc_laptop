@@ -5,6 +5,7 @@
 /* Mengaktifkan session PHP dan memuat file koneksi database */
 
 session_start();
+
 require_once __DIR__ . "/../config/koneksi.php";
 
 /* Memastikan halaman hanya menerima request POST dan tidak bisa diakses langsung melalui URL */
@@ -18,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 /* trim digunakan untuk menghapus spasi di awal dan akhir username agar input lebih konsisten */
 
-$username = trim((string) filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW));
-$password = (string) filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
-$csrf     = (string) filter_input(INPUT_POST, 'csrf', FILTER_UNSAFE_RAW);
+$username = trim((string) (filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW) ?? ''));
+$password = (string) (filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW) ?? '');
+$csrf     = (string) (filter_input(INPUT_POST, 'csrf', FILTER_UNSAFE_RAW) ?? '');
 
 /* Memastikan CSRF token yang dikirim form sesuai dengan token yang tersimpan di session */
 
@@ -52,13 +53,16 @@ if (strlen($password) < 6) {
 
 /* Menyiapkan prepared statement untuk mencegah SQL Injection */
 
-$stmt = mysqli_prepare($koneksi, "
+$stmt = mysqli_prepare(
+    $koneksi,
+    "
     SELECT id_pengguna, username, password, role
     FROM pengguna
     WHERE username = ?
     AND deleted_at IS NULL
     LIMIT 1
-");
+"
+);
 
 /* Menghentikan proses jika query gagal dipersiapkan */
 
@@ -121,4 +125,3 @@ if ($data && password_verify($password, $data['password'])) {
 
 header("Location: ../index.php?error=invalid");
 exit;
-?>

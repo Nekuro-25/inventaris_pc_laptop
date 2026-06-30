@@ -9,7 +9,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 error_reporting(E_ALL);
 
-$env_path = __DIR__ . '/../../.env';
+$env_path = __DIR__ . '../.env';
 
 if (file_exists($env_path)) {
     $lines = file($env_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -22,7 +22,7 @@ if (file_exists($env_path)) {
     }
 }
 
-$host     = $_ENV['DB_HOST'] ?? 'localhost';
+$host     = $_ENV['DB_HOST'] ?? '127.0.0.1';
 $user     = $_ENV['DB_USER'] ?? 'root';
 $password = $_ENV['DB_PASS'] ?? '';
 $database = $_ENV['DB_NAME'] ?? 'inventaris_db';

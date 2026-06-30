@@ -66,31 +66,26 @@ if (!mysqli_stmt_execute($stmt)) {
     exit;
 }
 
-/* Mengambil data user dari database */
+/* Mengambil data user tanpa mysqli_stmt_get_result agar kompatibel dengan lebih banyak environment PHP */
 
-$result = mysqli_stmt_get_result($stmt);
+mysqli_stmt_bind_result(
+    $stmt,
+    $id_pengguna,
+    $db_username,
+    $db_role
+);
 
-/* Menghentikan proses jika hasil query tidak valid */
+$user = null;
 
-if (!$result) {
-
-    mysqli_stmt_close($stmt);
-
-    session_destroy();
-
-    header("Location: ../index.php");
-    exit;
+if (mysqli_stmt_fetch($stmt)) {
+    $user = [
+        'id_pengguna' => $id_pengguna,
+        'username'    => $db_username,
+        'role'        => $db_role
+    ];
 }
 
-$user = mysqli_fetch_assoc($result);
-
-/* Membebaskan resource query */
-
-mysqli_free_result($result);
-
-mysqli_stmt_close($stmt);
-
-/* Memastikan user masih tersedia di database */
+mysqli_stmt_close($stmt);/* Memastikan user masih tersedia di database */
 
 if (!$user) {
 

@@ -14,8 +14,6 @@ $total_peminjaman = 0;
 $sedang_dipinjam = 0;
 $total_user = 0;
 $total_perbaikan = 0;
-$peminjaman_saya = 0;
-$dipinjam_saya = 0;
 
 /* Helper untuk mengambil total data dari query COUNT */
 
@@ -105,28 +103,6 @@ if ($isTeknisi) {
         SELECT COUNT(*) AS total
         FROM perbaikan
         WHERE deleted_at IS NULL
-    ");
-}
-
-/* Mengambil data statistik yang dibutuhkan oleh user */
-
-if ($isUser) {
-
-    $user_id = (int) $_SESSION['id_pengguna'];
-
-    $peminjaman_saya = getTotal($koneksi, "
-        SELECT COUNT(*) AS total
-        FROM peminjaman
-        WHERE id_pengguna = $user_id
-        AND deleted_at IS NULL
-    ");
-
-    $dipinjam_saya = getTotal($koneksi, "
-        SELECT COUNT(*) AS total
-        FROM peminjaman
-        WHERE id_pengguna = $user_id
-        AND status = 'dipinjam'
-        AND deleted_at IS NULL
     ");
 }
 
@@ -287,26 +263,6 @@ if ($isUser) {
                     <div class="card-info">
                         <h3>Total Perbaikan</h3>
                         <p><?= $total_perbaikan ?></p>
-                    </div>
-                </div>
-
-            <?php } ?>
-
-            <?php if ($isUser) { ?>
-
-                <div class="card card-primary">
-                    <div class="card-icon">📋</div>
-                    <div class="card-info">
-                        <h3>Peminjaman Saya</h3>
-                        <p><?= $peminjaman_saya ?></p>
-                    </div>
-                </div>
-
-                <div class="card card-success">
-                    <div class="card-icon">🔄</div>
-                    <div class="card-info">
-                        <h3>Sedang Dipinjam</h3>
-                        <p><?= $dipinjam_saya ?></p>
                     </div>
                 </div>
 

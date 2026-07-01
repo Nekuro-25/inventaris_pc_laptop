@@ -121,8 +121,6 @@ CREATE TABLE peminjaman (
 
     id_barang INT NOT NULL,
 
-    id_pengguna INT NOT NULL,
-
     nama_peminjam VARCHAR(100) NOT NULL,
 
     tanggal_pinjam DATE DEFAULT NULL,
@@ -140,10 +138,6 @@ CREATE TABLE peminjaman (
     CONSTRAINT peminjaman_ibfk_1
         FOREIGN KEY (id_barang)
         REFERENCES inventaris(id_barang),
-
-    CONSTRAINT peminjaman_ibfk_2
-        FOREIGN KEY (id_pengguna)
-        REFERENCES pengguna(id_pengguna)
 
 );
 

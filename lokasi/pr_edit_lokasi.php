@@ -27,7 +27,7 @@ if ($id === 0 || empty($nama_lokasi)) {
 
 /* ✅ FIX SQL Injection: Prepared Statement */
 $stmt = mysqli_prepare($koneksi, "
-    UPDATE lokasi SET nama_lokasi = ?, updated_at = NOW()
+    UPDATE lokasi SET nama_lokasi = ?
     WHERE id_lokasi = ? AND deleted_at IS NULL
 ");
 mysqli_stmt_bind_param($stmt, "si", $nama_lokasi, $id);

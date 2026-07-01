@@ -1,127 +1,172 @@
 <?php
+// proses_login.php
 
-/* Sistem login terdiri dari 4 lapisan: Guard (Request & CSRF), Validasi Input, Autentikasi Database, dan Session */
-
-/* Mengaktifkan session PHP dan memuat file koneksi database */
-
-session_start();
-
+require_once __DIR__ . "/../config/session.php";
 require_once __DIR__ . "/../config/koneksi.php";
+require_once __DIR__ . "/../config/constants.php";
 
-/* Memastikan halaman hanya menerima request POST dan tidak bisa diakses langsung melalui URL */
+// --- Fungsi Helper (cek keberadaan agar tidak duplikasi) ---
+if (!function_exists('flash')) {
+    function flash($key, $message = null) {
+        if ($message !== null) {
+            $_SESSION['flash'][$key] = $message;
+        } elseif (isset($_SESSION['flash'][$key])) {
+            $msg = $_SESSION['flash'][$key];
+            unset($_SESSION['flash'][$key]);
+            return $msg;
+        }
+        return null;
+    }
+}
 
+if (!function_exists('redirect')) {
+    function redirect($path, $error = null) {
+        if ($error !== null) {
+            flash('login_error', $error);
+        }
+        header("Location: " . BASE_PATH . $path);
+        exit;
+    }
+}
+
+if (!function_exists('log_attempt')) {
+    function log_attempt($username, $status, $ip) {
+        $log = date('Y-m-d H:i:s') . " | IP: $ip | User: $username | Status: $status" . PHP_EOL;
+        file_put_contents(__DIR__ . '/../logs/login.log', $log, FILE_APPEND);
+    }
+}
+
+// --- Rate Limiting (per IP, disimpan di session) ---
+$ip = $_SERVER['REMOTE_ADDR'];
+$rate_key = 'login_attempts_' . $ip;
+
+if (!isset($_SESSION[$rate_key])) {
+    $_SESSION[$rate_key] = ['count' => 0, 'first_attempt' => time()];
+}
+$attempt = &$_SESSION[$rate_key];
+
+// Reset jika lebih dari 15 menit
+if (time() - $attempt['first_attempt'] > 900) {
+    $attempt['count'] = 0;
+    $attempt['first_attempt'] = time();
+}
+
+// Cek batas percobaan
+if ($attempt['count'] >= 5) {
+    log_attempt('', 'rate_limit_exceeded', $ip);
+    redirect('index.php', 'Terlalu banyak percobaan login. Silakan coba lagi setelah 15 menit.');
+    exit;
+}
+
+// --- Validasi Request Method ---
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../index.php?error=invalid");
+    redirect('index.php', 'Metode request tidak valid.');
     exit;
 }
 
-/* Mengambil data dari form login */
+// --- Ambil Input ---
+$username = trim((string) ($_POST['username'] ?? ''));
+$password = (string) ($_POST['password'] ?? '');
+$csrf     = (string) ($_POST['csrf'] ?? '');
 
-/* trim digunakan untuk menghapus spasi di awal dan akhir username agar input lebih konsisten */
-
-$username = trim((string) (filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW) ?? ''));
-$password = (string) (filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW) ?? '');
-$csrf     = (string) (filter_input(INPUT_POST, 'csrf', FILTER_UNSAFE_RAW) ?? '');
-
-/* Memastikan CSRF token yang dikirim form sesuai dengan token yang tersimpan di session */
-
+// --- Validasi CSRF ---
 if (empty($_SESSION['csrf']) || empty($csrf) || !hash_equals($_SESSION['csrf'], $csrf)) {
-    header("Location: ../index.php?error=invalid");
+    log_attempt($username, 'csrf_invalid', $ip);
+    redirect('index.php', 'Token keamanan tidak valid. Silakan refresh halaman.');
     exit;
 }
 
-/* Memastikan username dan password tidak kosong */
-
+// --- Validasi Input ---
 if (empty($username) || empty($password)) {
-    header("Location: ../index.php?error=empty");
+    $attempt['count']++;
+    redirect('index.php', 'Username dan password tidak boleh kosong.');
     exit;
 }
-
-/* Memvalidasi format username agar hanya berisi huruf, angka, dan underscore */
 
 if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
-    header("Location: ../index.php?error=format");
+    $attempt['count']++;
+    redirect('index.php', 'Format username tidak valid (hanya huruf, angka, underscore).');
     exit;
 }
-
-/* Memastikan password minimal terdiri dari 6 karakter */
 
 if (strlen($password) < 6) {
-    header("Location: ../index.php?error=format");
+    $attempt['count']++;
+    redirect('index.php', 'Password minimal 6 karakter.');
     exit;
 }
 
-/* Menyiapkan prepared statement untuk mencegah SQL Injection */
+// --- Cek Koneksi Database ---
+if (!$koneksi) {
+    log_attempt($username, 'db_connection_error', $ip);
+    redirect('index.php', 'Gagal terhubung ke database. Silakan coba lagi.');
+    exit;
+}
 
+// --- Query ke Database (prepared statement) ---
 $stmt = mysqli_prepare(
     $koneksi,
-    "
-    SELECT id_pengguna, username, password, role
-    FROM pengguna
-    WHERE username = ?
-    AND deleted_at IS NULL
-    LIMIT 1
-"
+    "SELECT id_pengguna, username, password, role
+     FROM pengguna
+     WHERE username = ? AND deleted_at IS NULL
+     LIMIT 1"
 );
-
-/* Menghentikan proses jika query gagal dipersiapkan */
 
 if (!$stmt) {
-    header("Location: ../index.php?error=invalid");
+    log_attempt($username, 'db_prepare_error', $ip);
+    redirect('index.php', 'Terjadi kesalahan sistem. Silakan coba lagi.');
     exit;
 }
-
-/* Mengikat username ke query dan menjalankannya */
 
 mysqli_stmt_bind_param($stmt, "s", $username);
-
 if (!mysqli_stmt_execute($stmt)) {
+    log_attempt($username, 'db_execute_error', $ip);
     mysqli_stmt_close($stmt);
-
-    header("Location: ../index.php?error=invalid");
+    redirect('index.php', 'Terjadi kesalahan sistem. Silakan coba lagi.');
     exit;
 }
 
-/* Mengambil hasil query tanpa mysqli_stmt_get_result agar kompatibel dengan lebih banyak environment PHP */
-
-mysqli_stmt_bind_result(
-    $stmt,
-    $id_pengguna,
-    $db_username,
-    $db_password,
-    $role
-);
-
-$data = null;
-
+mysqli_stmt_bind_result($stmt, $id_pengguna, $db_username, $db_password, $role);
+$user = null;
 if (mysqli_stmt_fetch($stmt)) {
-    $data = [
-        'id_pengguna' => $id_pengguna,
-        'username'    => $db_username,
-        'password'    => $db_password,
-        'role'        => $role
+    $user = [
+        'id'        => $id_pengguna,
+        'username'  => $db_username,
+        'password'  => $db_password,
+        'role'      => $role,
+        'is_active' => $is_active
     ];
 }
-
 mysqli_stmt_close($stmt);
 
-/* Memverifikasi password hash, membuat session login, lalu mengarahkan user ke dashboard */
-
-if ($data && password_verify($password, $data['password'])) {
-
-    session_regenerate_id(true);
-
-    $_SESSION['username'] = $data['username'];
-    $_SESSION['role'] = $data['role'];
-    $_SESSION['id_pengguna'] = $data['id_pengguna'];
-
-    unset($_SESSION['csrf']);
-
-    header("Location: ../dashboard/index.php");
+// --- Verifikasi User ---
+if (!$user) {
+    $attempt['count']++;
+    log_attempt($username, 'user_not_found', $ip);
+    redirect('index.php', 'Username atau password salah.');
     exit;
 }
 
-/* Username atau password tidak sesuai */
+// Cek password
+if (!password_verify($password, $user['password'])) {
+    $attempt['count']++;
+    log_attempt($username, 'password_wrong', $ip);
+    redirect('index.php', 'Username atau password salah.');
+    exit;
+}
 
-header("Location: ../index.php?error=invalid");
+// --- Login Berhasil ---
+session_regenerate_id(true);
+
+$_SESSION['username']    = $user['username'];
+$_SESSION['role']        = $user['role'];
+$_SESSION['id_pengguna'] = $user['id'];
+
+// Hapus CSRF lama (akan dibuat ulang di halaman login)
+unset($_SESSION['csrf']);
+// Hapus counter rate limiting
+unset($_SESSION[$rate_key]);
+
+log_attempt($username, 'success', $ip);
+
+redirect('dashboard/index.php');
 exit;

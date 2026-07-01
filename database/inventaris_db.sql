@@ -123,6 +123,8 @@ CREATE TABLE peminjaman (
 
     id_pengguna INT NOT NULL,
 
+    nama_peminjam VARCHAR(100) NOT NULL,
+
     tanggal_pinjam DATE DEFAULT NULL,
 
     tanggal_kembali DATE DEFAULT NULL,

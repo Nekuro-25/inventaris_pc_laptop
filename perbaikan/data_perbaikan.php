@@ -6,6 +6,12 @@ include("../config/koneksi.php");
 adminOrTeknisi();
 blockUser();
 
+/* Generate token CSRF untuk form hapus di halaman ini */
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
+
 /* ✅ Query aman — kolom deleted_at sekarang sudah ada di tabel perbaikan */
 $query = mysqli_query($koneksi, "
     SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang
@@ -116,11 +122,13 @@ if (!$query) {
                         <td>
                             <?php if($isAdmin || $isTeknisi){ ?>
                                 <a href="edit_perbaikan.php?id=<?= (int)$row['id_perbaikan']; ?>" class="btn-edit">Edit</a>
-                                <a href="hapus_perbaikan.php?id=<?= (int)$row['id_perbaikan']; ?>"
-                                   class="btn-hapus"
-                                   onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
-                                   Hapus
-                                </a>
+                                <form method="POST" action="hapus_perbaikan.php" style="display:inline">
+                                    <input type="hidden" name="id" value="<?= (int)$row['id_perbaikan']; ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
+                                    <button type="submit" class="btn-hapus" onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
+                                       Hapus
+                                    </button>
+                                </form>
                             <?php } ?>
                         </td>
                     </tr>

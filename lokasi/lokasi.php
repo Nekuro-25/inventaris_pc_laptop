@@ -4,6 +4,12 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 blockUser();
 
+/* Generate token CSRF untuk form hapus di halaman ini */
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
+
 /* Ambil data lokasi aktif */
 $query = mysqli_query(
     $koneksi,
@@ -198,12 +204,13 @@ $query = mysqli_query(
                                         Edit
                                     </a>
 
-                                    <a
-                                        href="hapus_lokasi.php?id_lokasi=<?= (int)$row['id_lokasi']; ?>"
-                                        class="btn-hapus"
-                                        onclick="return konfirmasiHapus()">
-                                        Hapus
-                                    </a>
+                                    <form method="POST" action="hapus_lokasi.php" style="display:inline">
+                                        <input type="hidden" name="id_lokasi" value="<?= (int)$row['id_lokasi']; ?>">
+                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token); ?>">
+                                        <button type="submit" class="btn-hapus" onclick="return konfirmasiHapus()">
+                                            Hapus
+                                        </button>
+                                    </form>
 
                                 <?php } ?>
 

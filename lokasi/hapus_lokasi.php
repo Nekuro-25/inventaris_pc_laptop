@@ -4,14 +4,24 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 onlyAdmin();
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: lokasi.php");
+    exit;
+}
+
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    header("Location: lokasi.php?error=invalid_request");
+    exit;
+}
+
 /* Validasi parameter */
-if (!isset($_GET['id_lokasi'])) {
+if (!isset($_POST['id_lokasi'])) {
     header("Location: lokasi.php");
     exit;
 }
 
 /* ✅ FIX: Cast ke integer */
-$id = (int) $_GET['id_lokasi'];
+$id = (int) $_POST['id_lokasi'];
 
 /* ✅ FIX: Soft delete pakai Prepared Statement */
 $stmt = mysqli_prepare($koneksi, "

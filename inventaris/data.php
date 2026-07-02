@@ -3,6 +3,12 @@
 include("../config/auth.php");
 include("../config/koneksi.php");
 
+/* Generate token CSRF untuk form hapus di halaman ini */
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
+
 $query = mysqli_query($koneksi, "
     SELECT inventaris.*, lokasi.nama_lokasi
     FROM inventaris
@@ -118,7 +124,11 @@ $query = mysqli_query($koneksi, "
                             <?php if($isAdmin || $isTeknisi){ ?>
                                 <!-- ✅ FIX XSS: id di URL juga diproteksi -->
                                 <a href="edit.php?id=<?php echo (int)$row['id_barang']; ?>" class="btn-edit">Edit</a>
-                                <a href="hapus.php?id=<?php echo (int)$row['id_barang']; ?>" class="btn-hapus" onclick="return konfirmasiHapus()">Hapus</a>
+                                <form method="POST" action="hapus.php" style="display:inline">
+                                    <input type="hidden" name="id" value="<?php echo (int)$row['id_barang']; ?>">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                                    <button type="submit" class="btn-hapus" onclick="return konfirmasiHapus()">Hapus</button>
+                                </form>
                             <?php } ?>
 
                         </td>

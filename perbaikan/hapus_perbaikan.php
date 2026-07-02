@@ -6,13 +6,23 @@ include("../config/koneksi.php");
 adminOrTeknisi();
 blockUser();
 
-/* VALIDASI ID */
-if(!isset($_GET['id'])){
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: data_perbaikan.php");
     exit;
 }
 
-$id = (int) $_GET['id'];
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    header("Location: data_perbaikan.php?error=invalid_request");
+    exit;
+}
+
+/* VALIDASI ID */
+if(!isset($_POST['id'])){
+    header("Location: data_perbaikan.php");
+    exit;
+}
+
+$id = (int) $_POST['id'];
 
 /* ambil data perbaikan */
 $data = mysqli_query($koneksi,"

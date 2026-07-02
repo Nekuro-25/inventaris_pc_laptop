@@ -4,6 +4,12 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 onlyAdmin();
 
+/* Generate token CSRF untuk form hapus di halaman ini */
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
+
 /* ambil data user (soft delete aktif) */
 $query = mysqli_query($koneksi,"
     SELECT * FROM pengguna 
@@ -116,11 +122,13 @@ if(!$query){
                         <td>
                             <?php if($isAdmin){ ?>
                                 <a href="edit.php?id=<?php echo $row['id_pengguna']; ?>" class="btn-edit">Edit</a>
-                                <a href="hapus_user.php?id=<?php echo $row['id_pengguna']; ?>" 
-                                   class="btn-hapus"
-                                   onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
-                                   Hapus
-                                </a>
+                                <form method="POST" action="hapus_user.php" style="display:inline">
+                                    <input type="hidden" name="id" value="<?php echo $row['id_pengguna']; ?>">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                                    <button type="submit" class="btn-hapus" onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
+                                       Hapus
+                                    </button>
+                                </form>
                             <?php } ?>
                         </td>
 

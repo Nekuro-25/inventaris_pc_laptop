@@ -4,13 +4,23 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 onlyAdmin();
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: data_user.php");
+    exit;
+}
+
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    header("Location: data_user.php?error=invalid_request");
+    exit;
+}
+
 /* validasi parameter */
-if(!isset($_GET['id'])){
+if(!isset($_POST['id'])){
     header("Location: data_user.php?error=invalid");
     exit;
 }
 
-$id = intval($_GET['id']); // amankan input
+$id = intval($_POST['id']); // amankan input
 
 /* soft delete */
 $query = mysqli_query($koneksi, "

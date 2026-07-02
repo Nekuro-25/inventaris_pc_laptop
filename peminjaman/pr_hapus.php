@@ -4,14 +4,24 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 adminOrTeknisi();
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: index.php");
+    exit;
+}
+
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    header("Location: index.php?error=invalid_request");
+    exit;
+}
+
 /* Validasi parameter */
-if (!isset($_GET['id'])) {
+if (!isset($_POST['id'])) {
     header("Location: index.php");
     exit;
 }
 
 /* ✅ FIX: Cast ke integer */
-$id = (int) $_GET['id'];
+$id = (int) $_POST['id'];
 
 /* ✅ FIX: Ambil data peminjaman pakai Prepared Statement */
 $stmtCek = mysqli_prepare($koneksi, "

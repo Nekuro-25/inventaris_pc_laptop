@@ -5,6 +5,12 @@ include("../config/koneksi.php");
 adminOrTeknisi();
 blockUser();
 
+/* Generate token CSRF untuk form hapus di halaman ini */
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
+
 $query = mysqli_query($koneksi,"
 SELECT peminjaman.*, inventaris.kode_barang, inventaris.nama_barang 
 FROM peminjaman
@@ -120,7 +126,11 @@ AND inventaris.deleted_at IS NULL
                                 <a href="kembali.php?id=<?php echo $row['id']; ?>" class="btn-edit">Kembalikan</a>
                             <?php } ?>
                             <?php if($row['status'] == 'kembali'){ ?>
-                                <a href="pr_hapus.php?id=<?php echo $row['id']; ?>" class="btn-hapus"onclick="return konfirmasiHapus()">Hapus</a>
+                                <form method="POST" action="pr_hapus.php" style="display:inline">
+                                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                                    <button type="submit" class="btn-hapus" onclick="return konfirmasiHapus()">Hapus</button>
+                                </form>
                             <?php } ?>
                         </td>
 

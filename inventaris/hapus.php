@@ -4,12 +4,22 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 blockUser();
 
-if (!isset($_GET['id'])) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: data.php");
     exit;
 }
 
-$id = (int) $_GET['id'];
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    header("Location: data.php?error=invalid_request");
+    exit;
+}
+
+if (!isset($_POST['id'])) {
+    header("Location: data.php");
+    exit;
+}
+
+$id = (int) $_POST['id'];
 
 // ✅ FIX BUG #3: Cek apakah barang sedang dipinjam sebelum dihapus
 $stmtCekPinjam = mysqli_prepare($koneksi, "

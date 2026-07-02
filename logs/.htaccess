@@ -1,0 +1,14 @@
+# ============================================================
+# logs/.htaccess
+# Folder ini hanya berisi log internal aplikasi (login.log) --
+# tidak pernah diakses langsung lewat browser.
+# Blokir seluruh akses langsung ke folder ini.
+# ============================================================
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

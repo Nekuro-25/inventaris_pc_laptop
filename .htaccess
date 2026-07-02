@@ -1,0 +1,19 @@
+# ============================================================
+# .htaccess (root project)
+# Memblokir akses langsung via browser ke file/folder sensitif.
+# Tidak memengaruhi akses normal ke index.php dan seluruh modul.
+# ============================================================
+
+# Blokir semua file dotfile (.env, .gitignore, .gitattributes, dll.)
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Blokir seluruh folder .git (source code + history commit)
+RedirectMatch 404 ^/\.git(/|$)

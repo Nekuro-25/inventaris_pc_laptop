@@ -5,7 +5,6 @@
 session_set_cookie_params([
     'lifetime' => 0,
     'path'     => '/',
-    'domain'   => $_SERVER['HTTP_HOST'],
     'httponly' => true,
     'samesite' => 'Lax',
     'secure'   => isset($_SERVER['HTTPS'])

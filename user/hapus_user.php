@@ -2,6 +2,7 @@
 
 include("../config/auth.php");
 include("../config/koneksi.php");
+onlyAdmin();
 
 /* validasi parameter */
 if(!isset($_GET['id'])){

@@ -4,134 +4,127 @@ include("../config/auth.php");
 include("../config/koneksi.php");
 onlyAdmin();
 
-/* pastikan variabel role aman */
-$isAdmin = isset($isAdmin) ? $isAdmin : false;
-$isTeknisi = isset($isTeknisi) ? $isTeknisi : false;
-
-/* ambil data user (soft delete aktif) */
-$query = mysqli_query($koneksi,"
-    SELECT * FROM pengguna 
-    WHERE deleted_at IS NULL
-    ORDER BY id_pengguna DESC
-");
-
-/* cek error query */
-if(!$query){
-    die("Query error: " . mysqli_error($koneksi));
+/* Validasi ID dari URL */
+if (!isset($_GET['id'])) {
+    header("Location: data_user.php");
+    exit;
 }
+
+/* Cast ke integer untuk mencegah SQL Injection */
+$id = (int) $_GET['id'];
+
+/* Ambil data user berdasarkan ID (Prepared Statement) */
+$stmtUser = mysqli_prepare($koneksi, "
+    SELECT id_pengguna, nama, username, role
+    FROM pengguna
+    WHERE id_pengguna = ? AND deleted_at IS NULL
+    LIMIT 1
+");
+mysqli_stmt_bind_param($stmtUser, "i", $id);
+mysqli_stmt_execute($stmtUser);
+$result = mysqli_stmt_get_result($stmtUser);
+$data = mysqli_fetch_assoc($result);
+mysqli_stmt_close($stmtUser);
+
+if (!$data) {
+    header("Location: data_user.php?error=data_tidak_ditemukan");
+    exit;
+}
+
+/* Generate token CSRF dan simpan di session */
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manajemen User</title>
-
+<title>Edit Pengguna</title>
 <link rel="stylesheet" href="../css/dashboard.css">
-
 </head>
-
 <body>
 
 <div class="container">
 
-    <!-- Sidebar -->
     <div class="sidebar">
         <h2>Pengguna</h2>
-
         <ul>
             <li><a href="../dashboard/index.php">Dashboard</a></li>
             <li><a href="../inventaris/data.php">Data Inventaris</a></li>
-
-            <?php if($isAdmin || $isTeknisi){ ?>
+            <?php if ($isAdmin || $isTeknisi) { ?>
                 <li><a href="../peminjaman/index.php">Peminjaman</a></li>
                 <li><a href="../perbaikan/data_perbaikan.php">Perbaikan</a></li>
             <?php } ?>
-
-            <?php if($isAdmin){ ?>
+            <?php if ($isAdmin) { ?>
                 <li><a href="../lokasi/lokasi.php">Data Lokasi</a></li>
                 <li><a href="../laporan/laporan.php">Laporan</a></li>
                 <li><a href="data_user.php">Manajemen User</a></li>
             <?php } ?>
-
             <li><a href="../logout.php">Logout</a></li>
         </ul>
-
     </div>
 
-    <!-- Main Content -->
     <div class="main">
-
         <div class="topbar">
-            <h1>Manajemen User</h1>
+            <h1>Edit Pengguna</h1>
         </div>
 
-        <div class="table-container">
+        <div class="form-container">
 
-        <?php if($isAdmin){ ?>
-            <a href="tambah_user.php" class="btn-tambah">+ Tambah User</a>
-        <?php } ?>
-        
-            <table>
+            <form method="POST" action="pr_edit.php" autocomplete="off">
 
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Username</th>
-                        <th>Role</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                <input type="hidden" name="id_pengguna" value="<?php echo (int) $data['id_pengguna']; ?>">
 
-                <tbody>
+                <div class="form-group">
+                    <label>Nama</label>
+                    <input type="text" name="nama" value="<?php echo htmlspecialchars($data['nama']); ?>" required maxlength="100">
+                </div>
 
-                    <?php
-                    $no = 1;
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" value="<?php echo htmlspecialchars($data['username']); ?>" required minlength="3" maxlength="50">
+                </div>
 
-                    if(mysqli_num_rows($query) > 0){
-                        while($row = mysqli_fetch_assoc($query)){
-                    ?>
+                <div class="form-group">
+                    <label>Password Baru</label>
+                    <div class="password-field">
+                        <input type="password" id="password" name="password"
+                            placeholder="Kosongkan jika tidak ingin mengubah password" minlength="6">
+                        <button type="button" onclick="togglePassword()">Lihat</button>
+                    </div>
+                </div>
 
-                    <tr>
-                        <td><?php echo $no++; ?></td>    
-                        <td><?php echo htmlspecialchars($row['nama']); ?></td>
-                        <td><?php echo htmlspecialchars($row['username']); ?></td>
-                        <td><?php echo htmlspecialchars($row['role']); ?></td>
-                        <td>
-                            <?php if($isAdmin){ ?>
-                                <a href="edit.php?id=<?php echo urlencode($row['id_pengguna']); ?>" class="btn-edit">Edit</a>
-                                <a href="hapus_user.php?id=<?php echo urlencode($row['id_pengguna']); ?>" 
-                                   class="btn-hapus"
-                                   onclick="return konfirmasiHapus('Yakin ingin menghapus data ini?')">
-                                   Hapus
-                                </a>
-                            <?php } ?>
-                        </td>
-                    </tr>
-                    
-                    <?php 
-                        }
-                    } else {
-                    ?>
-                        <tr>
-                            <td colspan="5" style="text-align:center;">Data tidak ditemukan</td>
-                        </tr>
-                    <?php } ?>
-            
-                </tbody>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" required>
+                        <option value="admin" <?php if ($data['role'] === 'admin') echo "selected"; ?>>Admin</option>
+                        <option value="teknisi" <?php if ($data['role'] === 'teknisi') echo "selected"; ?>>Teknisi</option>
+                        <option value="user" <?php if ($data['role'] === 'user') echo "selected"; ?>>User</option>
+                    </select>
+                </div>
 
-            </table>
+                <div class="form-buttons">
+                    <button class="btn-simpan" type="submit">Update</button>
+                    <a href="data_user.php" class="btn-batal">Batal</a>
+                </div>
+
+            </form>
 
         </div>
-
     </div>
-
 </div>
 
-<script src="../js/konfirmasi.js"></script>
+<script>
+function togglePassword() {
+    var password = document.getElementById("password");
+    password.type = (password.type === "password") ? "text" : "password";
+}
+</script>
 
 </body>
 </html>

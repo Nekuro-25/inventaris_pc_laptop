@@ -29,8 +29,16 @@ $stmtCekPinjam = mysqli_prepare($koneksi, "
     AND deleted_at IS NULL
     LIMIT 1
 ");
+if (!$stmtCekPinjam) {
+    header("Location: data.php?error=gagal_hapus");
+    exit;
+}
 mysqli_stmt_bind_param($stmtCekPinjam, "i", $id);
-mysqli_stmt_execute($stmtCekPinjam);
+if (!mysqli_stmt_execute($stmtCekPinjam)) {
+    mysqli_stmt_close($stmtCekPinjam);
+    header("Location: data.php?error=gagal_hapus");
+    exit;
+}
 $resultPinjam = mysqli_stmt_get_result($stmtCekPinjam);
 mysqli_stmt_close($stmtCekPinjam);
 
@@ -45,6 +53,10 @@ $stmt = mysqli_prepare($koneksi, "
     SET deleted_at = NOW()
     WHERE id_barang = ?
 ");
+if (!$stmt) {
+    header("Location: data.php?error=gagal_hapus");
+    exit;
+}
 mysqli_stmt_bind_param($stmt, "i", $id);
 
 if (mysqli_stmt_execute($stmt)) {

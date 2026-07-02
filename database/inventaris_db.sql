@@ -167,4 +167,18 @@ CREATE TABLE perbaikan (
 
 );
 
+
+
+/* Membuat tabel login_attempts (rate limiting login, persisten per IP) */
+
+CREATE TABLE login_attempts (
+
+    ip VARCHAR(45) NOT NULL PRIMARY KEY,
+
+    attempt_count INT NOT NULL DEFAULT 0,
+
+    first_attempt_at DATETIME NOT NULL
+
+);
+
 COMMIT;

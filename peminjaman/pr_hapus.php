@@ -29,8 +29,16 @@ $stmtCek = mysqli_prepare($koneksi, "
     WHERE id = ? AND deleted_at IS NULL
     LIMIT 1
 ");
+if (!$stmtCek) {
+    header("Location: index.php?error=gagal_hapus");
+    exit;
+}
 mysqli_stmt_bind_param($stmtCek, "i", $id);
-mysqli_stmt_execute($stmtCek);
+if (!mysqli_stmt_execute($stmtCek)) {
+    mysqli_stmt_close($stmtCek);
+    header("Location: index.php?error=gagal_hapus");
+    exit;
+}
 $result = mysqli_stmt_get_result($stmtCek);
 $row = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmtCek);
@@ -45,15 +53,21 @@ if ($row['status'] === 'dipinjam') {
     $stmtKembali = mysqli_prepare($koneksi, "
         UPDATE inventaris SET status = 'tersedia' WHERE id_barang = ?
     ");
-    mysqli_stmt_bind_param($stmtKembali, "i", $row['id_barang']);
-    mysqli_stmt_execute($stmtKembali);
-    mysqli_stmt_close($stmtKembali);
+    if ($stmtKembali) {
+        mysqli_stmt_bind_param($stmtKembali, "i", $row['id_barang']);
+        mysqli_stmt_execute($stmtKembali);
+        mysqli_stmt_close($stmtKembali);
+    }
 }
 
 /* ✅ FIX: Soft delete pakai Prepared Statement */
 $stmtHapus = mysqli_prepare($koneksi, "
     UPDATE peminjaman SET deleted_at = NOW() WHERE id = ?
 ");
+if (!$stmtHapus) {
+    header("Location: index.php?error=gagal_hapus");
+    exit;
+}
 mysqli_stmt_bind_param($stmtHapus, "i", $id);
 
 if (mysqli_stmt_execute($stmtHapus)) {

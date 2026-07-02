@@ -36,26 +36,71 @@ if (!function_exists('log_attempt')) {
     }
 }
 
-// --- Rate Limiting (per IP, disimpan di session) ---
-$ip = $_SERVER['REMOTE_ADDR'];
-$rate_key = 'login_attempts_' . $ip;
-
-if (!isset($_SESSION[$rate_key])) {
-    $_SESSION[$rate_key] = ['count' => 0, 'first_attempt' => time()];
+// --- Cek Koneksi Database (dipindah ke awal karena rate limiting sekarang butuh $koneksi) ---
+if (!$koneksi) {
+    log_attempt('', 'db_connection_error', $_SERVER['REMOTE_ADDR']);
+    redirect('index.php', 'Gagal terhubung ke database. Silakan coba lagi.');
+    exit;
 }
-$attempt = &$_SESSION[$rate_key];
 
-// Reset jika lebih dari 15 menit
-if (time() - $attempt['first_attempt'] > 900) {
-    $attempt['count'] = 0;
-    $attempt['first_attempt'] = time();
+// --- Rate Limiting (per IP, disimpan persisten di database) ---
+$ip = $_SERVER['REMOTE_ADDR'];
+
+$stmtRate = mysqli_prepare($koneksi, "
+    SELECT attempt_count, first_attempt_at
+    FROM login_attempts
+    WHERE ip = ?
+    LIMIT 1
+");
+mysqli_stmt_bind_param($stmtRate, "s", $ip);
+mysqli_stmt_execute($stmtRate);
+mysqli_stmt_bind_result($stmtRate, $rate_count, $rate_first_attempt);
+$rate_found = mysqli_stmt_fetch($stmtRate);
+mysqli_stmt_close($stmtRate);
+
+if (!$rate_found) {
+    $rate_count = 0;
+    $rate_first_attempt = date('Y-m-d H:i:s');
+}
+
+// Reset jika lebih dari 15 menit sejak percobaan pertama
+if (strtotime($rate_first_attempt) !== false && (time() - strtotime($rate_first_attempt) > 900)) {
+    $rate_count = 0;
+    $rate_first_attempt = date('Y-m-d H:i:s');
+
+    $stmtReset = mysqli_prepare($koneksi, "DELETE FROM login_attempts WHERE ip = ?");
+    mysqli_stmt_bind_param($stmtReset, "s", $ip);
+    mysqli_stmt_execute($stmtReset);
+    mysqli_stmt_close($stmtReset);
+
+    $rate_found = false;
 }
 
 // Cek batas percobaan
-if ($attempt['count'] >= 5) {
+if ($rate_count >= 5) {
     log_attempt('', 'rate_limit_exceeded', $ip);
     redirect('index.php', 'Terlalu banyak percobaan login. Silakan coba lagi setelah 15 menit.');
     exit;
+}
+
+/* Helper: tambah 1 percobaan gagal untuk IP ini (dipanggil di setiap jalur gagal) */
+if (!function_exists('rate_limit_increment')) {
+    function rate_limit_increment($koneksi, $ip, $rate_found, $first_attempt) {
+        if ($rate_found) {
+            $stmt = mysqli_prepare($koneksi, "
+                UPDATE login_attempts SET attempt_count = attempt_count + 1 WHERE ip = ?
+            ");
+            mysqli_stmt_bind_param($stmt, "s", $ip);
+        } else {
+            $stmt = mysqli_prepare($koneksi, "
+                INSERT INTO login_attempts (ip, attempt_count, first_attempt_at)
+                VALUES (?, 1, ?)
+            ");
+            mysqli_stmt_bind_param($stmt, "ss", $ip, $first_attempt);
+        }
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
 }
 
 // --- Validasi Request Method ---
@@ -78,27 +123,20 @@ if (empty($_SESSION['csrf']) || empty($csrf) || !hash_equals($_SESSION['csrf'], 
 
 // --- Validasi Input ---
 if (empty($username) || empty($password)) {
-    $attempt['count']++;
+    rate_limit_increment($koneksi, $ip, $rate_found, $rate_first_attempt);
     redirect('index.php', 'Username dan password tidak boleh kosong.');
     exit;
 }
 
 if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
-    $attempt['count']++;
+    rate_limit_increment($koneksi, $ip, $rate_found, $rate_first_attempt);
     redirect('index.php', 'Format username tidak valid (hanya huruf, angka, underscore).');
     exit;
 }
 
 if (strlen($password) < 6) {
-    $attempt['count']++;
+    rate_limit_increment($koneksi, $ip, $rate_found, $rate_first_attempt);
     redirect('index.php', 'Password minimal 6 karakter.');
-    exit;
-}
-
-// --- Cek Koneksi Database ---
-if (!$koneksi) {
-    log_attempt($username, 'db_connection_error', $ip);
-    redirect('index.php', 'Gagal terhubung ke database. Silakan coba lagi.');
     exit;
 }
 
@@ -132,15 +170,14 @@ if (mysqli_stmt_fetch($stmt)) {
         'id'        => $id_pengguna,
         'username'  => $db_username,
         'password'  => $db_password,
-        'role'      => $role,
-        'is_active' => $is_active
+        'role'      => $role
     ];
 }
 mysqli_stmt_close($stmt);
 
 // --- Verifikasi User ---
 if (!$user) {
-    $attempt['count']++;
+    rate_limit_increment($koneksi, $ip, $rate_found, $rate_first_attempt);
     log_attempt($username, 'user_not_found', $ip);
     redirect('index.php', 'Username atau password salah.');
     exit;
@@ -148,7 +185,7 @@ if (!$user) {
 
 // Cek password
 if (!password_verify($password, $user['password'])) {
-    $attempt['count']++;
+    rate_limit_increment($koneksi, $ip, $rate_found, $rate_first_attempt);
     log_attempt($username, 'password_wrong', $ip);
     redirect('index.php', 'Username atau password salah.');
     exit;
@@ -163,8 +200,11 @@ $_SESSION['id_pengguna'] = $user['id'];
 
 // Hapus CSRF lama (akan dibuat ulang di halaman login)
 unset($_SESSION['csrf']);
-// Hapus counter rate limiting
-unset($_SESSION[$rate_key]);
+// Hapus counter rate limiting (persisten di database)
+$stmtClearRate = mysqli_prepare($koneksi, "DELETE FROM login_attempts WHERE ip = ?");
+mysqli_stmt_bind_param($stmtClearRate, "s", $ip);
+mysqli_stmt_execute($stmtClearRate);
+mysqli_stmt_close($stmtClearRate);
 
 log_attempt($username, 'success', $ip);
 

@@ -137,11 +137,9 @@ CREATE TABLE peminjaman (
 
     CONSTRAINT peminjaman_ibfk_1
         FOREIGN KEY (id_barang)
-        REFERENCES inventaris(id_barang),
+        REFERENCES inventaris(id_barang)
 
 );
-
-
 
 /* Membuat tabel perbaikan */
 

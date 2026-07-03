@@ -34,8 +34,16 @@ if (!in_array($role, $role_allowed)) {
 $hash = password_hash($password, PASSWORD_DEFAULT);
 
 $stmtCek = mysqli_prepare($koneksi, "SELECT id_pengguna FROM pengguna WHERE username = ? AND deleted_at IS NULL LIMIT 1");
+if (!$stmtCek) {
+    header("Location: tambah_user.php?error=gagal_simpan");
+    exit;
+}
 mysqli_stmt_bind_param($stmtCek, "s", $username);
-mysqli_stmt_execute($stmtCek);
+if (!mysqli_stmt_execute($stmtCek)) {
+    mysqli_stmt_close($stmtCek);
+    header("Location: tambah_user.php?error=gagal_simpan");
+    exit;
+}
 $resultCek = mysqli_stmt_get_result($stmtCek);
 mysqli_stmt_close($stmtCek);
 
@@ -45,6 +53,10 @@ if (mysqli_num_rows($resultCek) > 0) {
 }
 
 $stmtInsert = mysqli_prepare($koneksi, "INSERT INTO pengguna (nama, username, password, role) VALUES (?, ?, ?, ?)");
+if (!$stmtInsert) {
+    header("Location: tambah_user.php?error=gagal_simpan");
+    exit;
+}
 mysqli_stmt_bind_param($stmtInsert, "ssss", $nama, $username, $hash, $role);
 
 if (mysqli_stmt_execute($stmtInsert)) {

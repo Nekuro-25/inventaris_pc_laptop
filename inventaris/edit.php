@@ -19,8 +19,17 @@ $stmtBarang = mysqli_prepare($koneksi, "
     WHERE id_barang = ? AND deleted_at IS NULL
     LIMIT 1
 ");
+if (!$stmtBarang) {
+    header("Location: data.php?error=data_tidak_ditemukan");
+    exit;
+}
 mysqli_stmt_bind_param($stmtBarang, "i", $id);
-mysqli_stmt_execute($stmtBarang);
+if (!mysqli_stmt_execute($stmtBarang)) {
+    mysqli_stmt_close($stmtBarang);
+    header("Location: data.php?error=data_tidak_ditemukan");
+    exit;
+}
+
 $result = mysqli_stmt_get_result($stmtBarang);
 $data = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmtBarang);

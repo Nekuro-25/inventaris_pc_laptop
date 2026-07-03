@@ -20,8 +20,17 @@ $stmtUser = mysqli_prepare($koneksi, "
     WHERE id_pengguna = ? AND deleted_at IS NULL
     LIMIT 1
 ");
+if (!$stmtUser) {
+    header("Location: data_user.php?error=data_tidak_ditemukan");
+    exit;
+}
 mysqli_stmt_bind_param($stmtUser, "i", $id);
-mysqli_stmt_execute($stmtUser);
+if (!mysqli_stmt_execute($stmtUser)) {
+    mysqli_stmt_close($stmtUser);
+    header("Location: data_user.php?error=data_tidak_ditemukan");
+    exit;
+}
+
 $result = mysqli_stmt_get_result($stmtUser);
 $data = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmtUser);

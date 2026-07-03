@@ -28,8 +28,16 @@ $tindakan  = isset($_POST['tindakan']) ? trim($_POST['tindakan']) : '';
 
 /* Validasi data ada */
 $stmtCek = mysqli_prepare($koneksi, "SELECT id_perbaikan FROM perbaikan WHERE id_perbaikan = ? AND deleted_at IS NULL LIMIT 1");
+if (!$stmtCek) {
+    header("Location: data_perbaikan.php?error=gagal_update");
+    exit;
+}
 mysqli_stmt_bind_param($stmtCek, "i", $id);
-mysqli_stmt_execute($stmtCek);
+if (!mysqli_stmt_execute($stmtCek)) {
+    mysqli_stmt_close($stmtCek);
+    header("Location: data_perbaikan.php?error=gagal_update");
+    exit;
+}
 $resultCek = mysqli_stmt_get_result($stmtCek);
 mysqli_stmt_close($stmtCek);
 
@@ -42,6 +50,10 @@ $stmtUpdate = mysqli_prepare($koneksi, "
     UPDATE perbaikan SET id_barang = ?, tanggal = ?, kerusakan = ?, tindakan = ?, updated_at = NOW()
     WHERE id_perbaikan = ?
 ");
+if (!$stmtUpdate) {
+    header("Location: data_perbaikan.php?error=gagal_update");
+    exit;
+}
 mysqli_stmt_bind_param($stmtUpdate, "isssi", $id_barang, $tanggal, $kerusakan, $tindakan, $id);
 
 if (mysqli_stmt_execute($stmtUpdate)) {

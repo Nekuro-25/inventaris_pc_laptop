@@ -17,8 +17,17 @@ $id = (int) $_GET['id_lokasi'];
 $stmt = mysqli_prepare($koneksi, "
     SELECT * FROM lokasi WHERE id_lokasi = ? AND deleted_at IS NULL LIMIT 1
 ");
+if (!$stmt) {
+    header("Location: lokasi.php?error=data_tidak_ditemukan");
+    exit;
+}
 mysqli_stmt_bind_param($stmt, "i", $id);
-mysqli_stmt_execute($stmt);
+if (!mysqli_stmt_execute($stmt)) {
+    mysqli_stmt_close($stmt);
+    header("Location: lokasi.php?error=data_tidak_ditemukan");
+    exit;
+}
+
 $result = mysqli_stmt_get_result($stmt);
 $data = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);

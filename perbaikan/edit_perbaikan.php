@@ -14,20 +14,29 @@ if (!isset($_GET['id'])) {
 /* ✅ FIX SQL Injection: sudah ada dari sesi sebelumnya */
 $id = (int) $_GET['id'];
 
-$query = mysqli_query($koneksi, "
+$stmt = mysqli_prepare($koneksi, "
     SELECT perbaikan.*, inventaris.kode_barang, inventaris.nama_barang
     FROM perbaikan
     JOIN inventaris ON perbaikan.id_barang = inventaris.id_barang
-    WHERE perbaikan.id_perbaikan = $id
+    WHERE perbaikan.id_perbaikan = ?
     AND perbaikan.deleted_at IS NULL
     AND inventaris.deleted_at IS NULL
 ");
 
-if (!$query) {
+if (!$stmt) {
     die("Query error.");
 }
 
-$data = mysqli_fetch_assoc($query);
+mysqli_stmt_bind_param($stmt, "i", $id);
+
+if (!mysqli_stmt_execute($stmt)) {
+    mysqli_stmt_close($stmt);
+    die("Query error.");
+}
+
+$result = mysqli_stmt_get_result($stmt);
+$data = mysqli_fetch_assoc($result);
+mysqli_stmt_close($stmt);
 
 if (!$data) {
     header("Location: data_perbaikan.php?error=tidak_ditemukan");

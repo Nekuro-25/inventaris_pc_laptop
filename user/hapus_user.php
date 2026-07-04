@@ -23,16 +23,25 @@ if(!isset($_POST['id'])){
 $id = intval($_POST['id']); // amankan input
 
 /* soft delete */
-$query = mysqli_query($koneksi, "
+$stmt = mysqli_prepare($koneksi, "
     UPDATE pengguna 
     SET deleted_at = NOW() 
-    WHERE id_pengguna = $id
+    WHERE id_pengguna = ?
 ");
 
+if (!$stmt) {
+    header("Location: data_user.php?error=gagal_hapus");
+    exit;
+}
+
+mysqli_stmt_bind_param($stmt, "i", $id);
+
 /* cek hasil */
-if($query){
+if(mysqli_stmt_execute($stmt)){
+    mysqli_stmt_close($stmt);
     header("Location: data_user.php?pesan=hapus_berhasil");
 } else {
+    mysqli_stmt_close($stmt);
     header("Location: data_user.php?error=gagal_hapus");
 }
 
